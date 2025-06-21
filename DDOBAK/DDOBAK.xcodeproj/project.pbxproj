@@ -6,10 +6,6 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		C6E623012E0688C500166DB4 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = C6E623002E0688C500166DB4 /* ComposableArchitecture */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXFileReference section */
 		C6E6227A2E06829600166DB4 /* DDOBAK.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DDOBAK.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -27,7 +23,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C6E623012E0688C500166DB4 /* ComposableArchitecture in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -70,7 +65,6 @@
 			);
 			name = DDOBAK;
 			packageProductDependencies = (
-				C6E623002E0688C500166DB4 /* ComposableArchitecture */,
 			);
 			productName = DDOBAK;
 			productReference = C6E6227A2E06829600166DB4 /* DDOBAK.app */;
@@ -101,7 +95,6 @@
 			mainGroup = C6E622712E06829600166DB4;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				C6E622FF2E0688C500166DB4 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C6E6227B2E06829600166DB4 /* Products */;
@@ -345,25 +338,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		C6E622FF2E0688C500166DB4 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/pointfreeco/swift-composable-architecture";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.20.2;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		C6E623002E0688C500166DB4 /* ComposableArchitecture */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C6E622FF2E0688C500166DB4 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
-			productName = ComposableArchitecture;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C6E622722E06829600166DB4 /* Project object */;
 }

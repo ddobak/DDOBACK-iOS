@@ -6,12 +6,13 @@
 //
 
 import SwiftUI
+import ComposableArchitecture
 
 @main
 struct DDOBAKApp: App {
     var body: some Scene {
         WindowGroup {
-            DemoStartView()
+            ContentView()
         }
     }
 }
