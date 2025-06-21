@@ -11,7 +11,7 @@ import SwiftUI
 struct DDOBAKApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            DemoStartView()
         }
     }
 }

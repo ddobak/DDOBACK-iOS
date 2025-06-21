@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  DemoStartView.swift
 //  DDOBAK
 //
 //  Created by 이건우 on 6/21/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct DemoStartView: View {
     var body: some View {
         VStack {
             Image(systemName: "globe")
@@ -20,5 +20,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    DemoStartView()
 }
