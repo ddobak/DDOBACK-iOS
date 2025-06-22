@@ -8,23 +8,35 @@
 import SwiftUI
 
 struct ResultView: View {
-    
+        
+    @State private var isLoading = true
     let images: [UIImage]
     
-    init(images: [UIImage]) {
-        self.images = images
+    var body: some View {
+        VStack(spacing: 16) {
+            if isLoading {
+                ProgressView("분석 중입니다...")
+                    .progressViewStyle(CircularProgressViewStyle())
+            } else {
+                Text("❗️분석 중 오류가 발생했어요.")
+                    .foregroundColor(.red)
+                    .multilineTextAlignment(.center)
+                    .padding()
+            }
+        }
+        .padding()
+        .navigationTitle("분석 결과")
+        .task {
+            await analyze()
+        }
     }
     
-    var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            LazyHStack(spacing: 8) {
-                ForEach(images.indices, id: \.self) { index in
-                    Image(uiImage: images[index])
-                        .resizable()
-                        .scaledToFit()
-                }
-            }
-            .padding(.horizontal, 16)
-        }
+    @MainActor
+    private func analyze() async {
+        isLoading = true
+
+        try? await Task.sleep(nanoseconds: 2_000_000_000)
+
+        isLoading = false
     }
 }
