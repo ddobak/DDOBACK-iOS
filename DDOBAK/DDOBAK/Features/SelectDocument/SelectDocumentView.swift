@@ -26,7 +26,7 @@ struct SelectDocumentView: View {
     @State private var imageSelection: [PhotosPickerItem] = .init()
     @State private var selectedImages: [UIImage] = .init()
     @State private var showPhotosPicker: Bool = false
-    @State private var isReadyToNavigate: Bool = false
+    @State private var showMaskingView: Bool = false
     
     var body: some View {
         Button("갤러리에서 문서 고르기") {
@@ -40,7 +40,6 @@ struct SelectDocumentView: View {
         .onChange(of: imageSelection) { _, newItems in
             Task {
                 selectedImages = .init()
-                
                 do {
                     for item in newItems {
                         let image = try await processPickerItem(item: item)
@@ -48,17 +47,16 @@ struct SelectDocumentView: View {
                     }
                     guard selectedImages.isEmpty == false else { return }
                     Task { @MainActor in
-                        isReadyToNavigate = true
+                        showMaskingView = true
                     }
-                    
                 } catch {
                     // TODO: Alert?
                     print(error.localizedDescription)
                 }
             }
         }
-        .navigationDestination(isPresented: $isReadyToNavigate) {
-            MaskingView(images: selectedImages)
+        .navigationDestination(isPresented: $showMaskingView) {
+            MaskingView(documentImages: selectedImages)
         }
     }
     
