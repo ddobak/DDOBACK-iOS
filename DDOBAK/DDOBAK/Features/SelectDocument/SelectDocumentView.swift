@@ -57,6 +57,9 @@ struct SelectDocumentView: View {
                 }
             }
         }
+        .onAppear {
+            imageSelection = .init()
+        }
         .navigationDestination(isPresented: $showMaskingView) {
             MaskingView(documentImages: selectedImages, safeAreaInsets: safeAreaInsets)
         }

@@ -9,6 +9,8 @@ import SwiftUI
 
 struct MaskingView: View {
     
+    @Environment(\.dismiss) private var dismiss
+    
     @StateObject private var viewModel: MaskingViewModel
     @State private var drawingToolWidth: CGFloat = 10
     
@@ -33,7 +35,7 @@ struct MaskingView: View {
             )
             .setAppearance(.dark)
             .onLeadingItemTap {
-                
+                dismiss()
             }
             .onTrailingItemTap {
                 Task { await viewModel.saveMaskedImages() }
