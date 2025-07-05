@@ -10,60 +10,24 @@ import Combine
 import PencilKit
 
 final class MaskingViewModel: ObservableObject {
-    
-    // MARK: - Types
-    
-    enum ToolType: CaseIterable {
-        case marker
-        case eraser
 
-        var displayName: String {
-            switch self {
-            case .marker: return "그리기"
-            case .eraser: return "지우개"
-            }
-        }
-        
-        var iconName: String {
-            switch self {
-            case .marker: return "brush"
-            case .eraser: return "eraser"
-            }
-        }
-    }
+    // MARK: - Properties
 
-    /// 문서 이미지를 Masking하기 위한 형태의 MetaData입니다.
-    struct DocumentMetaData {
-        let image: UIImage
-        var drawing: PKDrawing
-        
-        /// 이미지 크기에 따른 PKCanvas 사이즈
-        var canvasSize: CGSize {
-            let height = UIScreen.main.bounds.height * 0.65
-            let ratio = imageAspectRatio
-            return CGSize(width: height * ratio, height: height)
-        }
-
-        /// 이미지 가로 세로 비율
-        private var imageAspectRatio: CGFloat {
-            guard image.size.height > 0 else { return 1 }
-            return image.size.width / image.size.height
-        }
-    }
-
-    // MARK: - Published Properties
-
+    /// 문서 데이터
     @Published var documents: [DocumentMetaData]
     @Published var currentImageIndex: Int = 0
     @Published var toolType: ToolType = .marker
 
     @Published var maskedImages: [UIImage] = .init()
     @Published var showResultView: Bool = false
+    
+    var verticalSafeAreaInset: CGFloat
 
     // MARK: - Computed Properties
 
     var currentCanvas: DocumentMetaData {
-        documents[safe: currentImageIndex] ?? DocumentMetaData(image: UIImage(), drawing: PKDrawing())
+        documents[safe: currentImageIndex]
+        ?? DocumentMetaData(image: UIImage(), drawing: PKDrawing())
     }
 
     var currentImage: UIImage {
@@ -74,14 +38,11 @@ final class MaskingViewModel: ObservableObject {
         currentCanvas.drawing
     }
 
-    var canvasSize: CGSize {
-        currentCanvas.canvasSize
-    }
-
     // MARK: - Init
 
-    init(images: [UIImage]) {
+    init(images: [UIImage], verticalSafeAreaInset: CGFloat) {
         self.documents = images.map { DocumentMetaData(image: $0, drawing: PKDrawing()) }
+        self.verticalSafeAreaInset = verticalSafeAreaInset
     }
 
     // MARK: - Interface Methods
@@ -100,16 +61,20 @@ final class MaskingViewModel: ObservableObject {
             currentImageIndex = index
         }
     }
+    
+    func getCanvasSize() -> CGSize {
+        currentCanvas.calculateCanvasSize(verticalSafeAreaInset: verticalSafeAreaInset)
+    }
 
     @MainActor
     func saveMaskedImages() async {
         let result = await withTaskGroup(of: (Int, UIImage).self) { group in
             for (index, canvas) in documents.enumerated() {
-                group.addTask {
+                group.addTask { [self] in
                     let image = self.renderMaskedImage(
                         baseImage: canvas.image,
                         drawing: canvas.drawing,
-                        size: canvas.canvasSize
+                        size: canvas.calculateCanvasSize(verticalSafeAreaInset: verticalSafeAreaInset)
                     )
                     return (index, image)
                 }
@@ -138,6 +103,51 @@ final class MaskingViewModel: ObservableObject {
         return renderer.image { _ in
             baseImage.draw(in: rect)
             drawing.image(from: rect, scale: format.scale).draw(in: rect)
+        }
+    }
+}
+
+// MARK: - ToolType
+extension MaskingViewModel {
+    enum ToolType: CaseIterable {
+        case marker
+        case eraser
+
+        var displayName: String {
+            switch self {
+            case .marker: return "그리기"
+            case .eraser: return "지우개"
+            }
+        }
+        
+        var iconName: String {
+            switch self {
+            case .marker: return "brush"
+            case .eraser: return "eraser"
+            }
+        }
+    }
+}
+
+// MARK: - DocumentMetaData
+extension MaskingViewModel {
+    /// 문서 이미지를 Masking하기 위한 형태의 MetaData입니다.
+    struct DocumentMetaData {
+        let image: UIImage
+        var drawing: PKDrawing
+        
+        /// 이미지 크기에 따른 PKCanvas 사이즈
+        func calculateCanvasSize(verticalSafeAreaInset: CGFloat) -> CGSize {
+            let excludedHeights = verticalSafeAreaInset + 42 + 12 + 71 + 20 + 27 + 22
+            let height = UIScreen.main.bounds.height - excludedHeights
+            let ratio = imageAspectRatio
+            return CGSize(width: height * ratio, height: height)
+        }
+
+        /// 이미지 가로 세로 비율
+        private var imageAspectRatio: CGFloat {
+            guard image.size.height > 0 else { return 1 }
+            return image.size.width / image.size.height
         }
     }
 }

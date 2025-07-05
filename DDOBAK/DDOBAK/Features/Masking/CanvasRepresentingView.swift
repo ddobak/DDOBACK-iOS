@@ -9,8 +9,9 @@ import SwiftUI
 import PencilKit
 
 struct CanvasRepresentingView: UIViewRepresentable {
-    @Binding var drawing: PKDrawing
     @ObservedObject var viewModel: MaskingViewModel
+    @Binding var drawing: PKDrawing
+    var toolWidth: CGFloat
 
     class Coordinator: NSObject, PKCanvasViewDelegate {
         var parent: CanvasRepresentingView
@@ -54,9 +55,9 @@ struct CanvasRepresentingView: UIViewRepresentable {
     private func pkToolType() -> PKTool {
         switch viewModel.toolType {
         case .marker:
-            return PKInkingTool(.marker, color: .black, width: 20)
+            return PKInkingTool(.marker, color: .black, width: toolWidth)
         case .eraser:
-            return PKEraserTool(.bitmap, width: 30)
+            return PKEraserTool(.bitmap, width: toolWidth)
         }
     }
 }

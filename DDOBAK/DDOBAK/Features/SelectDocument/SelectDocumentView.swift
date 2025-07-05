@@ -23,6 +23,8 @@ enum ProcessImageError: Error {
 }
 
 struct SelectDocumentView: View {
+    @Environment(\.safeAreaInsets) private var safeAreaInsets
+    
     @State private var imageSelection: [PhotosPickerItem] = .init()
     @State private var selectedImages: [UIImage] = .init()
     @State private var showPhotosPicker: Bool = false
@@ -56,7 +58,7 @@ struct SelectDocumentView: View {
             }
         }
         .navigationDestination(isPresented: $showMaskingView) {
-            MaskingView(documentImages: selectedImages)
+            MaskingView(documentImages: selectedImages, safeAreaInsets: safeAreaInsets)
         }
     }
     
