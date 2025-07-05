@@ -20,11 +20,12 @@ struct MaskingView: View {
             drawingArea
             
             imageSelector
+                .background(Color.mainBlack)
             
             toolbar
-            
-            Spacer()
+                .background(Color.mainBlack)
         }
+        .ignoresSafeArea(.all)
         .navigationDestination(isPresented: $viewModel.showResultView) {
             ResultView(images: viewModel.maskedImages)
         }
@@ -87,14 +88,14 @@ struct MaskingView: View {
             } label: {
                 Image("brush")
             }
-            .foregroundStyle(viewModel.toolType == .marker ? .red : .blue)
+            .foregroundStyle(viewModel.toolType == .marker ? .mainWhite : .gray6)
             
             Button {
                 viewModel.setToolType(type: .eraser)
             } label: {
                 Image("eraser")
             }
-            .foregroundStyle(viewModel.toolType == .eraser ? .red : .blue)
+            .foregroundStyle(viewModel.toolType == .eraser ? .mainWhite : .gray6)
 
             Spacer()
 
@@ -111,7 +112,6 @@ struct MaskingView: View {
         }
         .padding(.horizontal, 20)
         .frame(height: 60)
-        .border(.red)
     }
 }
 

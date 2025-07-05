@@ -9,5 +9,12 @@
 	</dict>
 	<key>UIUserInterfaceStyle</key>
 	<string>Light</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>WantedSans-Bold.otf</string>
+		<string>WantedSans-SemiBold.otf</string>
+		<string>WantedSans-Medium.otf</string>
+		<string>WantedSans-Regular.otf</string>
+	</array>
 </dict>
 </plist>
