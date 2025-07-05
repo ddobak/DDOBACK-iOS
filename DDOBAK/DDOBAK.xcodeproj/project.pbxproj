@@ -10,9 +10,22 @@
 		C6E6227A2E06829600166DB4 /* DDOBAK.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DDOBAK.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		C65D17B12E08DC4C000F0966 /* Exceptions for "DDOBAK" folder in "DDOBAK" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = C6E622792E06829600166DB4 /* DDOBAK */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		C6E6227C2E06829600166DB4 /* DDOBAK */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				C65D17B12E08DC4C000F0966 /* Exceptions for "DDOBAK" folder in "DDOBAK" target */,
+			);
 			path = DDOBAK;
 			sourceTree = "<group>";
 		};
@@ -258,6 +271,7 @@
 				DEVELOPMENT_TEAM = 6JLYLDSW4U;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DDOBAK/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "또박";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -292,6 +306,7 @@
 				DEVELOPMENT_TEAM = 6JLYLDSW4U;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DDOBAK/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "또박";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

@@ -23,6 +23,13 @@ final class MaskingViewModel: ObservableObject {
             case .eraser: return "지우개"
             }
         }
+        
+        var iconName: String {
+            switch self {
+            case .marker: return "brush"
+            case .eraser: return "eraser"
+            }
+        }
     }
 
     /// 문서 이미지를 Masking하기 위한 형태의 MetaData입니다.
@@ -79,8 +86,8 @@ final class MaskingViewModel: ObservableObject {
 
     // MARK: - Interface Methods
 
-    func toggleTool() {
-        toolType = (toolType == .marker) ? .eraser : .marker
+    func setToolType(type: ToolType) {
+        toolType = type
     }
 
     func clearCurrentDrawing() {
@@ -132,11 +139,5 @@ final class MaskingViewModel: ObservableObject {
             baseImage.draw(in: rect)
             drawing.image(from: rect, scale: format.scale).draw(in: rect)
         }
-    }
-}
-
-private extension Array {
-    subscript(safe index: Int) -> Element? {
-        indices.contains(index) ? self[index] : nil
     }
 }

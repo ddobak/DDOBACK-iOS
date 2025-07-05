@@ -9,34 +9,29 @@ import SwiftUI
 
 struct ResultView: View {
         
+    @StateObject var viewModel: ResultViewModel = .init()
     @State private var isLoading = true
     let images: [UIImage]
     
     var body: some View {
-        VStack(spacing: 16) {
-            if isLoading {
+        VStack {
+            if viewModel.isLoading {
                 ProgressView("분석 중입니다...")
-                    .progressViewStyle(CircularProgressViewStyle())
-            } else {
-                Text("❗️분석 중 오류가 발생했어요.")
-                    .foregroundColor(.red)
-                    .multilineTextAlignment(.center)
                     .padding()
+            } else if let result = viewModel.analysisResult {
+                ScrollView {
+                    Text(result)
+                        .padding()
+                }
+            } else {
+                Text("아직 분석을 시작하지 않았습니다.")
+                    .foregroundColor(.gray)
             }
         }
-        .padding()
-        .navigationTitle("분석 결과")
-        .task {
-            await analyze()
+        .onAppear {
+            Task {
+                await viewModel.analyze(images: images)
+            }
         }
-    }
-    
-    @MainActor
-    private func analyze() async {
-        isLoading = true
-
-        try? await Task.sleep(nanoseconds: 2_000_000_000)
-
-        isLoading = false
     }
 }

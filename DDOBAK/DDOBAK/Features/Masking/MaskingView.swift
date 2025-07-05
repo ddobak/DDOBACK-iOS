@@ -82,15 +82,24 @@ struct MaskingView: View {
     
     private var toolbar: some View {
         HStack(spacing: 16) {
-            toolButton
-            clearButton
+            Button {
+                viewModel.setToolType(type: .marker)
+            } label: {
+                Image("brush")
+            }
+            .foregroundStyle(viewModel.toolType == .marker ? .red : .blue)
+            
+            Button {
+                viewModel.setToolType(type: .eraser)
+            } label: {
+                Image("eraser")
+            }
+            .foregroundStyle(viewModel.toolType == .eraser ? .red : .blue)
 
             Spacer()
 
             Button("다음") {
-                Task {
-                    await viewModel.saveMaskedImages()
-                }
+                Task { await viewModel.saveMaskedImages() }
             }
             .foregroundColor(.white)
             .padding(.horizontal, 16)
@@ -100,36 +109,12 @@ struct MaskingView: View {
                     .fill(Color.blue)
             )
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal, 20)
         .frame(height: 60)
+        .border(.red)
     }
-    
-    private var toolButton: some View {
-        Button(action: viewModel.toggleTool) {
-            HStack {
-                Image(systemName: viewModel.toolType == .eraser ? "eraser.fill" : "pencil")
-                Text(viewModel.toolType == .eraser ? "지우개" : "그리기")
-            }
-            .foregroundColor(viewModel.toolType == .eraser ? .red : .primary)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.gray.opacity(0.2))
-            )
-        }
-    }
-    
-    private var clearButton: some View {
-        Button("전체 지우기") {
-            viewModel.clearCurrentDrawing()
-        }
-        .foregroundColor(.red)
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(Color.red, lineWidth: 1)
-        )
-    }
+}
+
+#Preview {
+    MaskingView(documentImages: [UIImage(named: "ss")!])
 }
