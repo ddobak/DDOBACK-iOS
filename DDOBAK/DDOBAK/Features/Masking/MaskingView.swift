@@ -139,7 +139,3 @@ struct MaskingView: View {
         .frame(height: 27)
     }
 }
-
-#Preview {
-    MaskingView(documentImages: [UIImage(named: "ss")!], safeAreaInsets: .init())
-}

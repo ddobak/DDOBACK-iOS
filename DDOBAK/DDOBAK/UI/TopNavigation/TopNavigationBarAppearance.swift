@@ -8,6 +8,9 @@
 import SwiftUI
 
 enum TopNavigationBarAppearance {
+    
+    static let topNavigationBarHeight: CGFloat = 42
+    
     case primary
     case light
     case dark

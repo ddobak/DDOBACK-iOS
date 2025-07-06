@@ -45,7 +45,7 @@ struct TopNavigationBar: View, Equatable {
             Spacer()
                 .frame(width: 20)
         }
-        .frame(height: 42)
+        .frame(height: TopNavigationBarAppearance.topNavigationBarHeight)
         .foregroundStyle(appearance.tintColor)
         .background(appearance.backgroundColor)
     }
