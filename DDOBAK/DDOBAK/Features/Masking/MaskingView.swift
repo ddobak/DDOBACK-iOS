@@ -54,7 +54,6 @@ struct MaskingView: View {
                 .padding(.bottom, 22)
                 .background(Color.mainBlack)
         }
-        .navigationBarBackButtonHidden()
         .navigationDestination(isPresented: $viewModel.showResultView) {
             ResultView(images: viewModel.maskedImages)
         }

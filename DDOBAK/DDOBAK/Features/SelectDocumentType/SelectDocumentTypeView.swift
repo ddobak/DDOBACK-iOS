@@ -60,6 +60,7 @@ struct SelectDocumentTypeView: View {
             }
             .padding(.bottom, 22)
         }
+        .background(.mainWhite)
     }
 }
 
