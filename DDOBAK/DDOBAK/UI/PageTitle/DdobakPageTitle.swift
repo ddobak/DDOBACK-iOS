@@ -42,6 +42,7 @@ struct DdobakPageTitle: View, Equatable {
                     .frame(maxWidth: .infinity, alignment: viewData.alignment.swiftUIAlignment)
             }
         }
+        .padding(.horizontal, 20)
     }
 }
 
