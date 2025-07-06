@@ -10,6 +10,7 @@ import SwiftUI
 struct DdobakButton: View, Equatable {
     
     private let viewData: DdobakButtonViewData
+    private var opaque: Bool = false
     private var action: (() -> Void)?
 
     init(viewData: DdobakButtonViewData) {
@@ -45,6 +46,12 @@ struct DdobakButton: View, Equatable {
         .disabled(!viewData.isEnabled || viewData.isLoading)
         .buttonStyle(DdobakButtonStyle(viewData: viewData))
         .padding(.horizontal, 20)
+        .padding(.top, opaque ? 10 : 0)
+        .background {
+            if opaque {
+                Color.red
+            }
+        }
     }
 }
 
@@ -52,6 +59,12 @@ extension DdobakButton {
     func onButtonTap(action: @escaping () -> Void) -> Self {
         var newSelf = self
         newSelf.action = action
+        return newSelf
+    }
+    
+    func setOpaque(_ opaque: Bool) -> Self {
+        var newSelf = self
+        newSelf.opaque = opaque
         return newSelf
     }
 }
@@ -65,6 +78,7 @@ extension DdobakButton {
             isLoading: true
         )
     )
+    .setOpaque(true)
     .onButtonTap {
         print("!")
     }
