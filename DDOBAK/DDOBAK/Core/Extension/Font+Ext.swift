@@ -82,3 +82,14 @@ extension Font {
         return Font(UIFont(name: "WantedSans-\(family.rawValue)", size: size)!)
     }
 }
+
+extension Font.FontFamily {
+    func upgradedWeight() -> Font.FontFamily {
+        switch self {
+        case .Regular: return .Medium
+        case .Medium:  return .SemiBold
+        case .SemiBold: return .Bold
+        case .Bold:    return .Bold // 이미 최고 굵기
+        }
+    }
+}

@@ -7,39 +7,6 @@
 
 import SwiftUI
 
-struct TopNavigationBarViewData: Equatable {
-    var shouldShowleadingItem: Bool
-    var leadingItem: TopNavigationLeadingItemType?
-    var shouldShowNavigationTitle: Bool
-    var navigationTitle: String?
-    var shouldShowTrailingItem: Bool
-    var trailingItem: TopNavigationTrailingItemType?
-}
-
-enum TopNavigationLeadingItemType: Equatable {
-    case backButton
-    case logo
-    
-    var iconName: String {
-        switch self {
-        case .backButton:
-            return "backArrow"
-        case .logo:
-            return "ddobakLogo"
-        }
-    }
-}
-
-enum TopNavigationTrailingItemType: Equatable {
-    case text(String)
-    case icon(type: TrailingItemIconType)
-    
-    enum TrailingItemIconType: String {
-        case xmark = "xmark"
-        case myPage = "person"
-    }
-}
-
 struct TopNavigationBar: View, Equatable {
     
     private let viewData: TopNavigationBarViewData
@@ -193,6 +160,7 @@ extension TopNavigationBar {
     TopNavigationBar(
         viewData: .init(
             shouldShowleadingItem: false,
+            leadingItem: .none,
             shouldShowNavigationTitle: true,
             navigationTitle: "navigationTitle",
             shouldShowTrailingItem: true,

@@ -10,28 +10,30 @@ import SwiftUI
 @Observable
 final class NavigationModel {
     
-    var path: [NavigationDestinations]
+    var path: [NavigationDestination]
     
-    init(
-        path: [NavigationDestinations] = [],
-    ) {
+    init(path: [NavigationDestination] = []) {
         self.path = path
     }
 }
 
 extension NavigationModel {
     
+    func pop() {
+        path.removeLast(1)
+    }
+    
     func popToRoot() {
         path.removeLast(path.count)
     }
     
-    func pop() {
-        path.removeLast(1)
+    func push(_ destination: NavigationDestination) {
+        path.append(destination)
     }
 }
 
 extension NavigationModel {
-    enum NavigationDestinations: String, CaseIterable, Hashable {
-        case temp
+    enum NavigationDestination: String, CaseIterable, Hashable {
+        case selectDocumet
     }
 }
