@@ -12,9 +12,8 @@ struct DdobakButton: View, Equatable {
     private let viewData: DdobakButtonViewData
     private var action: (() -> Void)?
 
-    init(viewData: DdobakButtonViewData, action: @escaping () -> Void = {}) {
+    init(viewData: DdobakButtonViewData) {
         self.viewData = viewData
-        self.action = action
     }
     
     static func == (lhs: DdobakButton, rhs: DdobakButton) -> Bool {
