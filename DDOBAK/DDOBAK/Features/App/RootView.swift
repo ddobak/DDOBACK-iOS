@@ -28,7 +28,7 @@ private extension RootView {
                     Group {
                         switch destination {
                         case .selectDocumet:
-                            SelectDocumentView()
+                            EmptyView()
                         }
                     }
                     .navigationBarBackButtonHidden(true)

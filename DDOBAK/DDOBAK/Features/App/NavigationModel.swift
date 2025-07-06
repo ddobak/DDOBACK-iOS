@@ -34,6 +34,8 @@ extension NavigationModel {
 
 extension NavigationModel {
     enum NavigationDestination: String, CaseIterable, Hashable {
-        case selectDocumet
+        case selectDocumetType
+        case privacyAgreement
+        case selectDocumetUploadMethod
     }
 }
