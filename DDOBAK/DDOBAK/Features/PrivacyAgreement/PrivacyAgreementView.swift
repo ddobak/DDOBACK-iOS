@@ -80,6 +80,9 @@ extension PrivacyAgreementView {
                     isLoading: false
                 )
             )
+            .onButtonTap {
+                navigationModel.push(.selectDocumetUploadMethod)
+            }
         }
     }
 }

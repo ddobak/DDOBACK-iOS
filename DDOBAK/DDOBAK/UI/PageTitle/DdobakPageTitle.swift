@@ -36,8 +36,8 @@ struct DdobakPageTitle: View, Equatable {
             
             if let subTitle {
                 Text(subTitle)
-                    .font(.ddobak(.caption2_m12))
-                    .lineLimit(1)
+                    .font(.ddobak(.body2_m14))
+                    .lineLimit(2)
                     .foregroundStyle(viewData.subtitleType?.subTitleColor ?? .clear)
                     .frame(maxWidth: .infinity, alignment: viewData.alignment.swiftUIAlignment)
             }
