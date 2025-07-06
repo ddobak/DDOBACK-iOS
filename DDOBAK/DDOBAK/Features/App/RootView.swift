@@ -27,8 +27,14 @@ private extension RootView {
                 .navigationDestination(for: NavigationModel.NavigationDestination.self) { destination in
                     Group {
                         switch destination {
-                        case .selectDocumet:
-                            EmptyView()
+                        case .selectDocumetType:
+                            SelectDocumentTypeView()
+                            
+                        case .privacyAgreement:
+                            PrivacyAgreementView()
+                            
+                        case .selectDocumetUploadMethod:
+                            SelectDocumentUploadMethodView()
                         }
                     }
                     .navigationBarBackButtonHidden(true)

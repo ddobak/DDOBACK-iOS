@@ -95,7 +95,7 @@ extension HomeView {
     private var mainFeatureNavigator: some View {
         HStack(spacing: 10) {
             Button {
-                navigationModel.push(.selectDocumet)
+                navigationModel.push(.selectDocumetType)
             } label: {
                 Image("analysis")
                     .resizable()
