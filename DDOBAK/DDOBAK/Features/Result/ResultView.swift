@@ -11,6 +11,12 @@ struct ResultView: View {
     let images: [UIImage]
     
     var body: some View {
-        Image(uiImage: images.first!)
+        ScrollView {
+            VStack(spacing: 10) {
+                ForEach(images, id: \.self) { image in
+                    Image(uiImage: image)
+                }
+            }
+        }
     }
 }

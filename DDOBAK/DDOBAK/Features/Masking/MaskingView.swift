@@ -58,9 +58,10 @@ struct MaskingView: View {
             ResultView(images: viewModel.maskedImages)
         }
     }
-    
-    // MARK: - View Components
-    
+}
+
+// MARK: - View Components
+extension MaskingView {
     private var drawingArea: some View {
         ZStack {
             Image(uiImage: viewModel.currentImage)
