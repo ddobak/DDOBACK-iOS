@@ -7,6 +7,7 @@
 
 import SwiftUI
 import PhotosUI
+import UniformTypeIdentifiers
 
 struct SelectDocumentUploadMethodView: View {
     
@@ -17,6 +18,10 @@ struct SelectDocumentUploadMethodView: View {
     @State private var selectedImages: [UIImage] = .init()
     @State private var showPhotosPicker: Bool = false
     @State private var showMaskingView: Bool = false
+    @State private var showPDFPicker: Bool = false
+    
+    @State private var alertErrorDescription: String?
+    @State private var showErrorAlert: Bool = false
     
     var body: some View {
         ZStack(alignment: .top) {
@@ -60,6 +65,12 @@ struct SelectDocumentUploadMethodView: View {
             .padding(.top, TopNavigationBarAppearance.topNavigationBarHeight)
         }
         .background(.mainWhite)
+        .onAppear {
+            imageSelection = .init()
+        }
+        .alert(alertErrorDescription ?? "이미지 처리에 문제가 발생했어요", isPresented: $showErrorAlert) {
+            Button("확인", role: .cancel) { }
+        }
         .photosPicker(
             isPresented: $showPhotosPicker,
             selection: $imageSelection,
@@ -68,11 +79,16 @@ struct SelectDocumentUploadMethodView: View {
         .onChange(of: imageSelection) { _, newItems in
             handleImageSelection(items: newItems)
         }
-        .onAppear {
-            imageSelection = .init()
+        .fileImporter(
+            isPresented: $showPDFPicker,
+            allowedContentTypes: [.pdf],
+            allowsMultipleSelection: false
+        ) { result in
+            handlePDFSelectionResult(result: result)
         }
         .navigationDestination(isPresented: $showMaskingView) {
             MaskingView(documentImages: selectedImages, safeAreaInsets: safeAreaInsets)
+                .navigationBarBackButtonHidden()
         }
     }
 }
@@ -105,7 +121,7 @@ extension SelectDocumentUploadMethodView {
                 )
             )
             .onButtonTap {
-                
+                showPDFPicker = true
             }
             
             DdobakButton(
@@ -138,8 +154,8 @@ extension SelectDocumentUploadMethodView {
                     showMaskingView = true
                 }
             } catch {
-                // TODO: Alert?
-                print(error.localizedDescription)
+                alertErrorDescription = error.localizedDescription
+                showErrorAlert = true
             }
         }
     }
@@ -151,6 +167,79 @@ extension SelectDocumentUploadMethodView {
         } else {
             throw ProcessImageError.failedToLoadImage
         }
+    }
+    
+    
+    private func handlePDFSelectionResult(result: Result<[URL], Error>) {
+        switch result {
+        case .success(let urls):
+            guard let url = urls.first else { return }
+
+            guard url.startAccessingSecurityScopedResource() else {
+                alertErrorDescription = "PDF 파일에 접근할 수 없어요."
+                showErrorAlert = true
+                return
+            }
+
+            Task {
+                defer { url.stopAccessingSecurityScopedResource() }
+
+                do {
+                    let images = await convertPDFToImages(url: url)
+                    guard images.isEmpty == false else {
+                        alertErrorDescription = "PDF에서 이미지를 추출할 수 없어요."
+                        showErrorAlert = true
+                        return
+                    }
+                    await MainActor.run {
+                        selectedImages = images
+                        showMaskingView = true
+                    }
+                }
+            }
+
+        case .failure(let error):
+            alertErrorDescription = error.localizedDescription
+            showErrorAlert = true
+        }
+    }
+    
+    private func convertPDFToImages(url: URL) async -> [UIImage] {
+        guard FileManager.default.fileExists(atPath: url.path) else {
+            print("❌ PDF 파일이 존재하지 않습니다: \(url)")
+            return []
+        }
+
+        guard let document = CGPDFDocument(url as CFURL) else {
+            print("❌ CGPDFDocument 초기화 실패: \(url)")
+            return []
+        }
+
+        guard document.numberOfPages > 0 else {
+            print("❌ PDF 페이지 없음")
+            return []
+        }
+
+        var images: [UIImage] = []
+        for pageIndex in 1...document.numberOfPages {
+            guard let page = document.page(at: pageIndex) else {
+                print("⚠️ 페이지 \(pageIndex) 를 불러오지 못했습니다")
+                continue
+            }
+            let pageRect = page.getBoxRect(.mediaBox)
+            let renderer = UIGraphicsImageRenderer(size: pageRect.size)
+            let image = renderer.image { ctx in
+                UIColor.white.set()
+                ctx.fill(pageRect)
+                ctx.cgContext.translateBy(x: 0, y: pageRect.size.height)
+                ctx.cgContext.scaleBy(x: 1.0, y: -1.0)
+                ctx.cgContext.drawPDFPage(page)
+            }
+            images.append(image)
+        }
+
+        print("✅ 변환된 이미지 수: \(images.count)")
+        return images
     }
 }
 
