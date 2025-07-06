@@ -26,7 +26,8 @@ struct MaskingView: View {
         VStack(spacing: 0) {
             TopNavigationBar(
                 viewData: .init(
-                    shouldShowBackButton: true,
+                    shouldShowleadingItem: true,
+                    leadingItem: .backButton,
                     shouldShowNavigationTitle: true,
                     navigationTitle: "Masks",
                     shouldShowTrailingItem: true,

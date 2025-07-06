@@ -8,15 +8,28 @@
 import SwiftUI
 
 struct TopNavigationBarViewData: Equatable {
-    var shouldShowBackButton: Bool
+    var shouldShowleadingItem: Bool
+    var leadingItem: TopNavigationLeadingItemType?
     var shouldShowNavigationTitle: Bool
     var navigationTitle: String?
     var shouldShowTrailingItem: Bool
     var trailingItem: TopNavigationTrailingItemType?
 }
 
-/// `leadingItem`은 backButton 밖에 존재하지 않아 따로 구현하지 않음
-/// 추후 필요 시 구현 예정
+enum TopNavigationLeadingItemType: Equatable {
+    case backButton
+    case logo
+    
+    var iconName: String {
+        switch self {
+        case .backButton:
+            return "backArrow"
+        case .logo:
+            return "ddobakLogo"
+        }
+    }
+}
+
 enum TopNavigationTrailingItemType: Equatable {
     case text(String)
     case icon(type: TrailingItemIconType)
@@ -48,17 +61,7 @@ struct TopNavigationBar: View, Equatable {
             Spacer()
                 .frame(width: 20)
             
-            if viewData.shouldShowBackButton {
-                /// `leadingItem`은 backButton
-                Button {
-                    leadingItemAction?()
-                } label: {
-                    Image("backArrow")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 20, height: 20)
-                }
-            }
+            buildLeadingItem()
             
             Spacer()
             
@@ -70,28 +73,7 @@ struct TopNavigationBar: View, Equatable {
             
             Spacer()
             
-            if viewData.shouldShowTrailingItem {
-                Button {
-                    trailingItemAction?()
-                } label: {
-                    switch viewData.trailingItem {
-                    case .text(let string):
-                        Text(string)
-                            .font(.ddobak(.button2_m16))
-                            .lineLimit(1)
-                        
-                    case .icon(let iconType):
-                        Image(iconType.rawValue)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 20, height: 20)
-                        
-                    case .none:
-                        Color.clear
-                            .frame(width: 20, height: 20)
-                    }
-                }
-            }
+            buildTrailingItem()
             
             Spacer()
                 .frame(width: 20)
@@ -99,6 +81,63 @@ struct TopNavigationBar: View, Equatable {
         .frame(height: 42)
         .foregroundStyle(appearance.tintColor)
         .background(appearance.backgroundColor)
+    }
+    
+    @ViewBuilder
+    private func buildLeadingItem() -> some View {
+        if viewData.shouldShowleadingItem {
+            /// `leadingItem`은 backButton
+            Button {
+                leadingItemAction?()
+            } label: {
+                switch viewData.leadingItem {
+                case .backButton:
+                    Image("backArrow")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 20, height: 20)
+                    
+                case .logo:
+                    Image("ddobakLogo")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .padding(.vertical, 10)
+                    
+                case .none:
+                    Color.clear
+                        .frame(width: 20, height: 20)
+                }
+            }
+        } else {
+            Color.clear
+                .frame(width: 20, height: 20)
+        }
+    }
+    
+    @ViewBuilder
+    private func buildTrailingItem() -> some View {
+        if viewData.shouldShowTrailingItem {
+            Button {
+                trailingItemAction?()
+            } label: {
+                switch viewData.trailingItem {
+                case .text(let string):
+                    Text(string)
+                        .font(.ddobak(.button2_m16))
+                        .lineLimit(1)
+                    
+                case .icon(let iconType):
+                    Image(iconType.rawValue)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 20, height: 20)
+                    
+                case .none:
+                    Color.clear
+                        .frame(width: 20, height: 20)
+                }
+            }
+        }
     }
 }
 
@@ -122,36 +161,45 @@ extension TopNavigationBar {
     }
 }
 
-#Preview {
-    VStack {
-        TopNavigationBar(
-            viewData: .init(
-                shouldShowBackButton: true,
-                shouldShowNavigationTitle: true,
-                navigationTitle: "navigationTitle",
-                shouldShowTrailingItem: true,
-                trailingItem: .icon(type: .xmark)
-            )
+#Preview("primary / logo") {
+    TopNavigationBar(
+        viewData: .init(
+            shouldShowleadingItem: true,
+            leadingItem: .logo,
+            shouldShowNavigationTitle: false,
+            navigationTitle: "navigationTitle",
+            shouldShowTrailingItem: true,
+            trailingItem: .icon(type: .xmark)
         )
-        
-        TopNavigationBar(
-            viewData: .init(
-                shouldShowBackButton: true,
-                shouldShowNavigationTitle: true,
-                navigationTitle: "navigationTitle",
-                shouldShowTrailingItem: true,
-                trailingItem: .text("완료")
-            )
-        )
-        
-        TopNavigationBar(
-            viewData: .init(
-                shouldShowBackButton: true,
-                shouldShowNavigationTitle: true,
-                navigationTitle: "navigationTitle",
-                shouldShowTrailingItem: true
-            )
-        )
-        .setAppearance(.dark)
-    }
+    )
+    .setAppearance(.primary)
 }
+
+#Preview("light / leading") {
+    TopNavigationBar(
+        viewData: .init(
+            shouldShowleadingItem: true,
+            leadingItem: .backButton,
+            shouldShowNavigationTitle: true,
+            navigationTitle: "navigationTitle",
+            shouldShowTrailingItem: false,
+            trailingItem: .none
+        )
+    )
+    .setAppearance(.light)
+}
+
+#Preview("dark / trailing") {
+    TopNavigationBar(
+        viewData: .init(
+            shouldShowleadingItem: false,
+            shouldShowNavigationTitle: true,
+            navigationTitle: "navigationTitle",
+            shouldShowTrailingItem: true,
+            trailingItem: .text("완료")
+        )
+    )
+    .setAppearance(.dark)
+}
+
+
