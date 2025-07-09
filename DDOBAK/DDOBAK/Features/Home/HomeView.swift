@@ -10,6 +10,10 @@ import SwiftUI
 struct HomeView: View {
     @Environment(NavigationModel.self) private var navigationModel
     
+    // for debug
+    @State private var isShowingTokenAlert: Bool = false
+    @State private var tokenInput: String = ""
+    
     var body: some View {
         ZStack(alignment: .top) {
             
@@ -41,6 +45,10 @@ struct HomeView: View {
                     mainFeatureNavigator
                         .padding(.vertical, 12)
                         .padding(.horizontal, 20)
+                    
+                    #if DEBUG
+                    debugOption
+                    #endif
                     
                     Spacer()
                 }
@@ -80,9 +88,6 @@ extension HomeView {
                 .foregroundStyle(.mainBlue.opacity(0.1))
         }
     }
-}
-
-extension HomeView {
     
     private var mainBanner: some View {
         Image("mainThumbnail")
@@ -115,6 +120,23 @@ extension HomeView {
                     .buttonShadow()
             }
         }
+    }
+}
+
+extension HomeView {
+    private var debugOption: some View {
+        Text("DEBUG OPTION")
+            .padding()
+            .onTapGesture {
+                isShowingTokenAlert = true
+            }
+            .alert("AccessToken", isPresented: $isShowingTokenAlert) {
+                TextField("Input AccessToken", text: $tokenInput)
+                Button("save") {
+                    UserDefaults.standard.set(tokenInput, forKey: "accessToken")
+                }
+                Button("cancel", role: .cancel) { }
+            } message: { }
     }
 }
 
