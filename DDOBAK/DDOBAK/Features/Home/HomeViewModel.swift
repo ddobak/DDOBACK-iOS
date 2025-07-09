@@ -10,9 +10,15 @@ import SwiftUI
 @Observable
 final class HomeViewModel {
     
-    var contracts: [Contract]? = []
+    var recentAnalyses: [Contract]?
     var isLoading: Bool = false
     var errorMessage: String?
+    
+    @MainActor
+    func refresh() async {
+        clearData()
+        await fetchUserAnalyses()
+    }
 
     @MainActor
     func fetchUserAnalyses() async {
@@ -23,10 +29,14 @@ final class HomeViewModel {
             let response: ResponseDTO<AnalysesResult> = try await APIClient.shared.request(
                 path: "/user/analyses"
             )
-            contracts = response.data?.contracts
-            DDOBakLogger.log(contracts, level: .info, category: .viewModel)
+            recentAnalyses = response.data?.contracts
+            DDOBakLogger.log(recentAnalyses, level: .info, category: .viewModel)
         } catch {
             errorMessage = error.localizedDescription
         }
+    }
+    
+    private func clearData() {
+        recentAnalyses = nil
     }
 }

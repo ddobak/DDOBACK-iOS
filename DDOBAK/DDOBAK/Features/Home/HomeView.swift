@@ -46,19 +46,28 @@ struct HomeView: View {
                         .padding(.horizontal, 20)
                         
                     mainFeatureNavigator
-                        .padding(.vertical, 12)
+                        .padding(.top, 12)
                         .padding(.horizontal, 20)
                     
+                    Spacer()
+                        .frame(height: 36)
+                    
+                    recentAnalysesSection
                     
                     #if DEBUG
                     debugOption
+                        .padding(.vertical, 30)
                     #endif
                     
                     Spacer()
                 }
             }
-            .padding(.vertical, TopNavigationBarAppearance.topNavigationBarHeight)
+            .ignoresSafeArea(edges: .bottom)
+            .padding(.top, TopNavigationBarAppearance.topNavigationBarHeight)
             .background(.lightBlue)
+            .refreshable {
+                await viewModel.refresh()
+            }
             .onChange(of: viewModel.errorMessage) { _, errorMessage in
                 guard let errorMessage else { return }
                 DDOBakLogger.log(errorMessage, level: .debug, category: .feature(featureName: "Home"))
@@ -132,22 +141,52 @@ extension HomeView {
             }
         }
     }
+    
+    private var recentAnalysesSection: some View {
+        
+        VStack(spacing: 20) {
+            DdobakSectionHeader(title: "최근 분석 이력")
+            
+            VStack(spacing: 12) {
+                if let recentAnalyses = viewModel.recentAnalyses {
+                    ForEach(recentAnalyses, id: \.self) { analysis in
+                        ContractAnalysisInfoCardView(viewData: analysis)
+                    }
+                } else {
+                    ForEach(0..<2, id: \.self) { _ in
+                        ContractAnalysisInfoCardView(viewData: .mock())
+                            .redacted(reason: .placeholder)
+                    }
+                }
+            }
+            .animation(.easeInOut, value: viewModel.recentAnalyses)
+            .padding(.horizontal, 20)
+        }
+    }
 }
 
 extension HomeView {
     private var debugOption: some View {
-        Text("DEBUG OPTION")
-            .padding()
-            .onTapGesture {
-                isShowingTokenAlert = true
+        DdobakTag(
+            viewData: .init(
+                title: "DEBUG OPTION",
+                titleColor: .mainBlue,
+                backgroundColor: .lightBlue,
+                borderColor: .mainBlue)
+        )
+        .buttonShadow()
+        .onTapGesture {
+            isShowingTokenAlert = true
+        }
+        .alert("AccessToken", isPresented: $isShowingTokenAlert) {
+            TextField("Input AccessToken", text: $tokenInput)
+            Button("save") {
+                UserDefaults.standard.set(tokenInput, forKey: "accessToken")
             }
-            .alert("AccessToken", isPresented: $isShowingTokenAlert) {
-                TextField("Input AccessToken", text: $tokenInput)
-                Button("save") {
-                    UserDefaults.standard.set(tokenInput, forKey: "accessToken")
-                }
-                Button("cancel", role: .cancel) { }
-            } message: { }
+            Button("cancel", role: .cancel) { }
+        } message: {
+            
+        }
     }
 }
 
