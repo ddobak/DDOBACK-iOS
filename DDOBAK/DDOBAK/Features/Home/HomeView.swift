@@ -8,7 +8,10 @@
 import SwiftUI
 
 struct HomeView: View {
+    
     @Environment(NavigationModel.self) private var navigationModel
+    
+    @State private var viewModel: HomeViewModel = .init()
     
     // for debug
     @State private var isShowingTokenAlert: Bool = false
@@ -55,6 +58,13 @@ struct HomeView: View {
             }
             .padding(.vertical, TopNavigationBarAppearance.topNavigationBarHeight)
             .background(.lightBlue)
+            .onChange(of: viewModel.errorMessage) { _, errorMessage in
+                guard let errorMessage else { return }
+                DDOBakLogger.log(errorMessage, level: .debug, category: .feature(featureName: "Home"))
+            }
+            .task {
+                await viewModel.fetchUserAnalyses()
+            }
         }
     }
 }

@@ -7,18 +7,6 @@
 
 import Foundation
 
-// MARK: - APIClient Protocol
-
-protocol APIClientInterface {
-    func request<T: Decodable>(
-        path: String,
-        method: HTTPMethod,
-        headers: [String: String],
-        queryItems: [URLQueryItem]?,
-        body: Encodable?
-    ) async throws -> ResponseDTO<T>
-}
-
 // MARK: - APIClient Implementation
 
 final class APIClient: APIClientInterface {
@@ -36,8 +24,8 @@ final class APIClient: APIClientInterface {
         body: Encodable? = nil
     ) async throws -> ResponseDTO<T> {
 
-        guard let baseURLString = Bundle.main.infoDictionary?["API_BASE_URL"] as? String,
-              let url = URL(string: baseURLString) else {
+        guard let baseURLString = Bundle.main.infoDictionary?["BASE_URL"] as? String,
+              let _ = URL(string: baseURLString) else {
             fatalError("❌ Invalid or missing BASE_URL in Info.plist")
         }
         
