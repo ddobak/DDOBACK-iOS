@@ -16,5 +16,17 @@
 		<string>WantedSans-Medium.otf</string>
 		<string>WantedSans-Regular.otf</string>
 	</array>
+	<key>BASE_URL</key>
+	<string>$(BASE_URL)</string>
+	<key>CONFIGURATION_NAME</key>
+	<string>$(CONFIGURATION_NAME)</string>
+	<key>NSFileProviderDomainUsageDescription</key>
+	<string>계약서 파일 업로드를 위해 파일 접근 권한이 필요합니다.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>계약서 사진 업로드를 위해 앨범 접근 권한이 필요합니다.</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>ko</string>
+	</array>
 </dict>
 </plist>
