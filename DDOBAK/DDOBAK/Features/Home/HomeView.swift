@@ -49,6 +49,7 @@ struct HomeView: View {
                         .padding(.vertical, 12)
                         .padding(.horizontal, 20)
                     
+                    
                     #if DEBUG
                     debugOption
                     #endif
