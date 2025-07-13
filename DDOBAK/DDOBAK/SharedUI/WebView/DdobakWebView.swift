@@ -32,7 +32,7 @@ struct DdobakWebView: UIViewRepresentable {
         webView.uiDelegate = context.coordinator
         webView.navigationDelegate = context.coordinator
         webView.isHidden = true
-        webView.backgroundColor = UIColor.black // 원하는 색으로
+        webView.backgroundColor = .mainWhite
         
         if let baseURLString = Bundle.main.object(forInfoDictionaryKey: "WEBVIEW_BASE_URL") as? String,
            let fullURL = URL(string: baseURLString + path) {

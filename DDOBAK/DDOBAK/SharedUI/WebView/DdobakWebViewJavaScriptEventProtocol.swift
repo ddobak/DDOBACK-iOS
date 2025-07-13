@@ -7,6 +7,5 @@
 
 /// 웹에서 발생하는 이벤트 정의
 public enum DdobakWebViewJavaScriptEventProtocol {
-    case systemSharing(string: String)
-    case didFinishUpload
+    case goHome
 }

@@ -37,6 +37,9 @@ private extension RootView {
                             
                         case .selectDocumetUploadMethod:
                             SelectContractUploadMethodView()
+                            
+                        case .checkOcrResult(let contractId):
+                            CheckOCRResultView(contractId: contractId)
                         }
                     }
                     .navigationBarBackButtonHidden(true)

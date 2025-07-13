@@ -33,9 +33,10 @@ extension NavigationModel {
 }
 
 extension NavigationModel {
-    enum NavigationDestination: String, CaseIterable, Hashable {
+    enum NavigationDestination: Hashable {
         case selectDocumetType
         case privacyAgreement
         case selectDocumetUploadMethod
+        case checkOcrResult(contractId: String)
     }
 }

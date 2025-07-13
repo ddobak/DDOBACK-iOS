@@ -8,9 +8,10 @@
 import SwiftUI
 
 struct MaskingView: View {
-    
-    @Environment(\.dismiss) private var dismiss
+
+    @Environment(NavigationModel.self) private var navigationModel
     @Environment(ContractAnalysisFlowModel.self) private var contractAnalysisFlowModel
+    @Environment(\.dismiss) private var dismiss
     
     @StateObject private var viewModel: MaskingViewModel
     @State private var drawingToolWidth: CGFloat = 10
@@ -68,9 +69,9 @@ struct MaskingView: View {
                 viewModel.showErrorAlert = false
             }
         }
-        .navigationDestination(isPresented: $viewModel.isOcrSuccessful) {
-            if let ocrContractID = viewModel.ocrContractId {
-                DdobakWebView(path: "/ocr?contId=\(ocrContractID)")
+        .onChange(of: viewModel.isOcrSuccessful) { _, isOcrSuccessful in
+            if let ocrContractId = viewModel.ocrContractId {
+                navigationModel.push(.checkOcrResult(contractId: ocrContractId))
             }
         }
     }
