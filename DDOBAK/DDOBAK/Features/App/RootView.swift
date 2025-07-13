@@ -43,6 +43,9 @@ private extension RootView {
                             
                         case .analysisResult(let contractId, let analysisId):
                             AnalysisResultView(contractId: contractId, analysisId: analysisId)
+                            
+                        case .honeyTip(let tipId):
+                            HoneyTipView(tipId: tipId)
                         }
                     }
                     .navigationBarBackButtonHidden(true)

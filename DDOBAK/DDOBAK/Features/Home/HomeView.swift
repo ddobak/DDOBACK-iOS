@@ -54,6 +54,11 @@ struct HomeView: View {
                     
                     recentAnalysesSection
                     
+                    Spacer()
+                        .frame(height: 36)
+                    
+                    honeyTips
+                    
                     #if DEBUG
                     debugOption
                         .padding(.vertical, 30)
@@ -164,6 +169,15 @@ extension HomeView {
             .animation(.easeInOut, value: viewModel.recentAnalyses)
             .padding(.horizontal, 20)
         }
+    }
+    
+    private var honeyTips: some View {
+        Image("honey")
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .onTapGesture {
+                navigationModel.push(.honeyTip(tipId: "1"))
+            }
     }
 }
 
