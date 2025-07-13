@@ -9,7 +9,8 @@ import SwiftUI
 import WebKit
 
 public protocol DdobakWebViewListener: AnyObject {
-    func event(_ event: DdobakWebViewJavaScriptEventProtocol)
+    func handleEvent(_ event: DdobakWebViewJavaScriptEventProtocol)
+    func saveWebToPDF(_ pdfData: Data)
 }
 
 struct DdobakWebView: UIViewRepresentable {
@@ -53,6 +54,7 @@ struct DdobakWebView: UIViewRepresentable {
     class Coordinator: NSObject, WKScriptMessageHandler, WKUIDelegate, WKNavigationDelegate {
         
         weak var listener: DdobakWebViewListener?
+        var webView: WKWebView?
         
         init(listener: DdobakWebViewListener?) {
             self.listener = listener
@@ -60,13 +62,17 @@ struct DdobakWebView: UIViewRepresentable {
         
         func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
             DDOBakLogger.log("didReceive message: \(message.name)", level: .debug, category: .webView)
-            listener?.event(.init(eventName: message.name))
+            if message.name == "savePdf" {
+                saveWebViewAsPDF()
+            } else {
+                listener?.handleEvent(.init(eventName: message.name))
+            }
         }
         
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-            print("🐼 didFinish")
-            webView.isHidden = false
+            self.webView = webView
             
+            webView.isHidden = false
             let zoomDisableScript = """
                 var meta = document.createElement('meta');
                 meta.name = 'viewport';
@@ -76,22 +82,23 @@ struct DdobakWebView: UIViewRepresentable {
             webView.evaluateJavaScript(zoomDisableScript, completionHandler: nil)
         }
         
-        func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
-            DDOBakLogger.log("didCommit", level: .debug, category: .webView)
-            webView.isHidden = true
-        }
-        
-        func webView(
-            _ webView: WKWebView,
-            decidePolicyFor navigationAction: WKNavigationAction,
-            preferences: WKWebpagePreferences
-        ) async -> (WKNavigationActionPolicy, WKWebpagePreferences) {
-            DDOBakLogger.log("decidePolicyFor", level: .debug, category: .webView)
-            return (.allow, preferences)
+        private func saveWebViewAsPDF() {
+            guard let webView else { return }
+            
+            let config = WKPDFConfiguration()
+            config.rect = webView.bounds
+            
+            webView.createPDF(configuration: config) { result in
+                switch result {
+                case .success(let data):
+                    self.listener?.saveWebToPDF(data)
+                case .failure(let error):
+                    DDOBakLogger.log("PDF generation failed: \(error)", level: .error, category: .webView)
+                }
+            }
         }
     }
 }
-
 
 #Preview {
     DdobakWebView(path: "/test")

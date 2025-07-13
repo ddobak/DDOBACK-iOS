@@ -59,8 +59,10 @@ struct AnalysisResultView: View {
                 navigationModel.push(.selectContractType)
             }
         }
-        .onChange(of: webViewHandler.savePDF) { _, savePDF in
-            
+        .sheet(isPresented: $webViewHandler.showActivityView) {
+            if let activityFileURL = webViewHandler.activityFileURL {
+                ActivityView(activityItems: [activityFileURL])
+            }
         }
     }
     
@@ -68,3 +70,4 @@ struct AnalysisResultView: View {
         return "/analysis?contId=\(contractId)&analysisId=\(analysisId)"
     }
 }
+
