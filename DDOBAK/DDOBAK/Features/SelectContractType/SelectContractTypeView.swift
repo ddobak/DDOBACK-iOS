@@ -74,18 +74,12 @@ extension SelectContractTypeView {
                 Button {
                     viewModel.selectedContractType = type
                 } label: {
-                    RoundedRectangle(cornerRadius: 10)
+                    Image(type.thumbnailImageName(selected: viewModel.selectedContractType == type))
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
                         .frame(height: selectButtonHeight)
-                        .foregroundStyle(
-                            viewModel.selectedContractType == type
-                            ? .lightBlue
-                            : .gray2
-                        )
-                        .overlay {
-                            Text(type.rawValue)
-                                .foregroundStyle(.mainBlack)
-                        }
                 }
+                .buttonStyle(PlainButtonStyle())
             }
         }
         .padding(.horizontal, 20)
@@ -95,4 +89,5 @@ extension SelectContractTypeView {
 #Preview {
     SelectContractTypeView()
         .environment(NavigationModel())
+        .environment(ContractAnalysisFlowModel())
 }

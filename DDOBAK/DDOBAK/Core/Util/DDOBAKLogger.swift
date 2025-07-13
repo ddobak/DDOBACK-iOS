@@ -24,6 +24,9 @@ enum DDOBakLogger {
         /// 네트워킹 관련
         case network
         
+        /// 웹뷰 관련
+        case webView
+        
         /// DTO, VO 관련
         case model
         
@@ -39,6 +42,7 @@ enum DDOBakLogger {
             switch self {
             case .ui: return "UI"
             case .network: return "Network"
+            case .webView: return "WebView"
             case .model: return "Model"
             case .viewModel: return "ViewModel"
             case .feature(let featureName): return "Feature:\(featureName)"

@@ -12,6 +12,8 @@ struct CheckOCRResultView: View {
     @Environment(NavigationModel.self) private var navigationModel
     @Environment(\.safeAreaInsets) private var safeAreaInsets
     
+    @StateObject private var webViewHandler: DdobakWebViewEventHandler = .init()
+    
     private let basePath: String = "/ocr?contId="
     private let contractId: String
     
@@ -35,13 +37,15 @@ struct CheckOCRResultView: View {
             .onLeadingItemTap {
                 navigationModel.pop()
             }
-            .opacity(0.5)
             .zIndex(1)
             
-            DdobakWebView(path: basePath + contractId)
+            DdobakWebView(path: basePath + contractId, listener: webViewHandler)
                 .padding(.top, TopNavigationBarAppearance.topNavigationBarHeight + safeAreaInsets.top)
                 .ignoresSafeArea(.all)
         }
         .background(.mainWhite)
+        .onChange(of: webViewHandler.popToRoot) { _, shouldPopToRoot in
+            if shouldPopToRoot { navigationModel.popToRoot() }
+        }
     }
 }

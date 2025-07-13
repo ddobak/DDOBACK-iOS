@@ -23,7 +23,9 @@ struct DdobakWebView: UIViewRepresentable {
     
     func makeUIView(context: Context) -> WKWebView {
         let contentController = WKUserContentController()
-        contentController.add(context.coordinator, name: "callbackHandler")
+        contentController.add(context.coordinator, name: "goHome")
+        contentController.add(context.coordinator, name: "savePdf")
+        contentController.add(context.coordinator, name: "analyzeOther")
         
         let config = WKWebViewConfiguration()
         config.userContentController = contentController
@@ -57,8 +59,8 @@ struct DdobakWebView: UIViewRepresentable {
         }
         
         func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-            print("🐼 didReceive message: \(message.body)")
-            listener?.event(.didFinishUpload)
+            DDOBakLogger.log("didReceive message: \(message.name)", level: .debug, category: .webView)
+            listener?.event(.init(eventName: message.name))
         }
         
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
@@ -75,8 +77,8 @@ struct DdobakWebView: UIViewRepresentable {
         }
         
         func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
+            DDOBakLogger.log("didCommit", level: .debug, category: .webView)
             webView.isHidden = true
-            print("🐼 didCommit")
         }
         
         func webView(
@@ -84,8 +86,13 @@ struct DdobakWebView: UIViewRepresentable {
             decidePolicyFor navigationAction: WKNavigationAction,
             preferences: WKWebpagePreferences
         ) async -> (WKNavigationActionPolicy, WKWebpagePreferences) {
-            print("🐼 decidePolicyFor")
+            DDOBakLogger.log("decidePolicyFor", level: .debug, category: .webView)
             return (.allow, preferences)
         }
     }
+}
+
+
+#Preview {
+    DdobakWebView(path: "/test")
 }
