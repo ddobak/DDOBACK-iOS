@@ -1,5 +1,5 @@
 //
-//  CheckOCRResultView.swift
+//  AnalysisResultView.swift
 //  DDOBAK
 //
 //  Created by 이건우 on 6/22/25.
@@ -7,18 +7,22 @@
 
 import SwiftUI
 
-struct CheckOCRResultView: View {
+struct AnalysisResultView: View {
     
     @Environment(NavigationModel.self) private var navigationModel
     @Environment(\.safeAreaInsets) private var safeAreaInsets
     
     @State private var webViewHandler: DdobakWebViewEventHandler = .init()
     
-    private let basePath: String = "/ocr?contId="
     private let contractId: String
+    private let analysisId: String
     
-    init(contractId: String) {
+    init(
+        contractId: String,
+        analysisId: String
+    ) {
         self.contractId = contractId
+        self.analysisId = analysisId
     }
     
     var body: some View {
@@ -39,13 +43,28 @@ struct CheckOCRResultView: View {
             }
             .zIndex(1)
             
-            DdobakWebView(path: basePath + contractId, listener: webViewHandler)
+            DdobakWebView(path: buildPath(), listener: webViewHandler)
                 .padding(.top, TopNavigationBarAppearance.topNavigationBarHeight + safeAreaInsets.top)
                 .ignoresSafeArea(.all)
         }
         .background(.mainWhite)
-        .onChange(of: webViewHandler.popToRoot) { _, shouldPopToRoot in
-            if shouldPopToRoot { navigationModel.popToRoot() }
+        .onChange(of: webViewHandler.popToRoot) { _, popToRoot in
+            if popToRoot {
+                navigationModel.popToRoot()
+            }
         }
+        .onChange(of: webViewHandler.analyzeOtherContract) { _, analyzeOtherContract in
+            if analyzeOtherContract {
+                navigationModel.popToRoot()
+                navigationModel.push(.selectContractType)
+            }
+        }
+        .onChange(of: webViewHandler.savePDF) { _, savePDF in
+            
+        }
+    }
+    
+    private func buildPath() -> String {
+        return "/analysis?contId=\(contractId)&analysisId=\(analysisId)"
     }
 }

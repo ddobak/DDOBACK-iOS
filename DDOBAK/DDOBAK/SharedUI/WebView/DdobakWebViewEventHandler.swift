@@ -5,12 +5,13 @@
 //  Created by 이건우 on 7/14/25.
 //
 
-import Combine
+import Observation
 
-final class DdobakWebViewEventHandler: DdobakWebViewListener, ObservableObject {
-    @Published var popToRoot: Bool = false
-    @Published var analyzeOtherContract: Bool = false
-    @Published var savePDF: Bool = false
+@Observable
+final class DdobakWebViewEventHandler: DdobakWebViewListener {
+    var popToRoot: Bool = false
+    var analyzeOtherContract: Bool = false
+    var savePDF: Bool = false
 
     func event(_ event: DdobakWebViewJavaScriptEventProtocol) {
         switch event {

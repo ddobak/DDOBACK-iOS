@@ -29,17 +29,20 @@ private extension RootView {
                 .navigationDestination(for: NavigationModel.NavigationDestination.self) { destination in
                     Group {
                         switch destination {
-                        case .selectDocumetType:
+                        case .selectContractType:
                             SelectContractTypeView()
                             
                         case .privacyAgreement:
                             PrivacyAgreementView()
                             
-                        case .selectDocumetUploadMethod:
+                        case .selectContractUploadMethod:
                             SelectContractUploadMethodView()
                             
                         case .checkOcrResult(let contractId):
                             CheckOCRResultView(contractId: contractId)
+                            
+                        case .analysisResult(let contractId, let analysisId):
+                            AnalysisResultView(contractId: contractId, analysisId: analysisId)
                         }
                     }
                     .navigationBarBackButtonHidden(true)

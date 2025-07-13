@@ -120,14 +120,13 @@ extension HomeView {
     private var mainFeatureNavigator: some View {
         HStack(spacing: 10) {
             Button {
-                navigationModel.push(.selectDocumetType)
+                navigationModel.push(.selectContractType)
             } label: {
                 Image("analysis")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     .buttonShadow()
-                    
             }
             
             Button {
@@ -151,6 +150,9 @@ extension HomeView {
                 if let recentAnalyses = viewModel.recentAnalyses {
                     ForEach(recentAnalyses, id: \.self) { analysis in
                         ContractAnalysisInfoCardView(viewData: analysis)
+                            .onCardViewTap { contractId, analysisId in
+                                navigationModel.push(.analysisResult(contractId: contractId, analysisId: analysisId))
+                            }
                     }
                 } else {
                     ForEach(0..<2, id: \.self) { _ in

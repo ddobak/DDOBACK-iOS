@@ -17,10 +17,10 @@ public enum DdobakWebViewJavaScriptEventProtocol {
         case "goHome":
             self = .goHome
             
-        case "analyzeOtherContract":
+        case "analyzeOther":
             self = .analyzeOtherContract
             
-        case "savePDF":
+        case "savePdf":
             self = .savePDF
             
         default:

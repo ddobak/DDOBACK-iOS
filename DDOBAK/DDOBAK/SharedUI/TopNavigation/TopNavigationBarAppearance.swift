@@ -14,10 +14,11 @@ enum TopNavigationBarAppearance {
     case primary
     case light
     case dark
+    case clear
 
     var tintColor: Color {
         switch self {
-        case .primary, .light:
+        case .primary, .light, .clear:
             return .mainBlack
             
         case .dark:
@@ -30,6 +31,7 @@ enum TopNavigationBarAppearance {
         case .primary: return .lightBlue
         case .light: return .mainWhite
         case .dark: return .mainBlack
+        case .clear: return .clear
         }
     }
 }

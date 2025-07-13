@@ -20,7 +20,8 @@ final class NavigationModel {
 extension NavigationModel {
     
     func pop() {
-        path.removeLast(1)
+        guard !path.isEmpty else { return }
+        path.removeLast()
     }
     
     func popToRoot() {
@@ -30,13 +31,18 @@ extension NavigationModel {
     func push(_ destination: NavigationDestination) {
         path.append(destination)
     }
+    
+    func push(contentsOf destinations: [NavigationDestination]) {
+        path.append(contentsOf: destinations)
+    }
 }
 
 extension NavigationModel {
     enum NavigationDestination: Hashable {
-        case selectDocumetType
+        case selectContractType
         case privacyAgreement
-        case selectDocumetUploadMethod
+        case selectContractUploadMethod
         case checkOcrResult(contractId: String)
+        case analysisResult(contractId: String, analysisId: String)
     }
 }

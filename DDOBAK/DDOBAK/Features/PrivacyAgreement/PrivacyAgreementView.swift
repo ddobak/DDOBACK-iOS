@@ -81,7 +81,7 @@ extension PrivacyAgreementView {
                 )
             )
             .onButtonTap {
-                navigationModel.push(.selectDocumetUploadMethod)
+                navigationModel.push(.selectContractUploadMethod)
             }
         }
     }

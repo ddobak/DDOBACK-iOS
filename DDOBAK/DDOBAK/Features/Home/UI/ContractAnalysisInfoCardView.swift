@@ -13,7 +13,7 @@ struct ContractAnalysisInfoCardView: View {
     @State private var angle: Double = 0
     
     private let viewData: Contract
-    private var action: ((String) -> Void)?
+    private var action: (((String, String)) -> Void)?
     
     init(viewData: Contract) {
         self.viewData = viewData
@@ -58,11 +58,17 @@ struct ContractAnalysisInfoCardView: View {
                 .foregroundStyle(.mainWhite)
                 .buttonShadow()
         }
+        .onTapGesture {
+            // 분석 중이 아닐때만 액션 처리
+            if viewData.analysisStatus != .inProgress {
+                action?((viewData.contractId, viewData.analysisId))
+            }
+        }
     }
 }
 
 extension ContractAnalysisInfoCardView {
-    func onCardViewTap(action: @escaping (String) -> Void) -> Self {
+    func onCardViewTap(action: @escaping ((String, String)) -> Void) -> Self {
         var newSelf = self
         newSelf.action = action
         return newSelf
