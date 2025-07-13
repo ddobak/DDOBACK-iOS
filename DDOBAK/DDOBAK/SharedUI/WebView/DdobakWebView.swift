@@ -14,7 +14,7 @@ public protocol DdobakWebViewListener: AnyObject {
 
 struct DdobakWebView: UIViewRepresentable {
     
-    let urlString: String
+    let path: String
     weak var listener: DdobakWebViewListener?
     
     func makeCoordinator() -> Coordinator {
@@ -34,8 +34,11 @@ struct DdobakWebView: UIViewRepresentable {
         webView.isHidden = true
         webView.backgroundColor = UIColor.black // 원하는 색으로
         
-        if let url = URL(string: urlString) {
-            webView.load(URLRequest(url: url))
+        if let baseURLString = Bundle.main.object(forInfoDictionaryKey: "WEBVIEW_BASE_URL") as? String,
+           let fullURL = URL(string: baseURLString + path) {
+            webView.load(URLRequest(url: fullURL))
+        } else {
+            DDOBakLogger.log("Invalid WEBVIEW_BASE_URL", level: .fault, category: .network)
         }
         
         return webView
@@ -85,9 +88,4 @@ struct DdobakWebView: UIViewRepresentable {
             return (.allow, preferences)
         }
     }
-}
-
-#Preview {
-    DdobakWebView(urlString: "https://www.apple.com", listener: nil)
-        .ignoresSafeArea()
 }

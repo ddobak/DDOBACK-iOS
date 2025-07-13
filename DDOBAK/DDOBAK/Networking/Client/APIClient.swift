@@ -16,6 +16,7 @@ final class APIClient: APIClientInterface {
 
     private let session = URLSession.shared
 
+    
     func request<T: Decodable>(
         path: String,
         method: HTTPMethod,
@@ -72,5 +73,78 @@ final class APIClient: APIClientInterface {
             error.handleDecodingError()
             throw APIError.decoding(error)
         }
+    }
+    
+    
+    func requestMultipart<T: Decodable>(
+        path: String,
+        method: HTTPMethod = .post,
+        headers: [String: String] = [:],
+        parts: [MultipartPart]
+    ) async throws -> ResponseDTO<T> {
+
+        guard let baseURLString = Bundle.main.object(forInfoDictionaryKey: "BASE_URL") as? String,
+              let baseURL = URL(string: baseURLString) else {
+            fatalError("❌ Invalid or missing BASE_URL in Info.plist")
+        }
+
+        let url = baseURL.appendingPathComponent(path)
+        var request = URLRequest(url: url)
+        request.httpMethod = method.rawValue
+
+        headers.forEach { key, value in
+            request.setValue(value, forHTTPHeaderField: key)
+        }
+
+        if let token = UserDefaults.standard.string(forKey: "accessToken") {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+
+        let boundary = "Boundary-\(UUID().uuidString)"
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+
+        let bodyData = createMultipartBody(parts: parts, boundary: boundary)
+        request.httpBody = bodyData
+
+        let (data, response) = try await session.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+
+        guard (200..<300).contains(httpResponse.statusCode) else {
+            throw APIError.statusCode(httpResponse.statusCode)
+        }
+
+        do {
+            let decoded = try JSONDecoder().decode(ResponseDTO<T>.self, from: data)
+            return decoded
+        } catch {
+            throw APIError.decoding(error)
+        }
+    }
+    
+    private func createMultipartBody(
+        parts: [MultipartPart],
+        boundary: String
+    ) -> Data {
+        var body = Data()
+
+        for part in parts {
+            body.append("--\(boundary)\r\n".data(using: .utf8)!)
+
+            if let filename = part.filename, let mimeType = part.mimeType {
+                body.append("Content-Disposition: form-data; name=\"\(part.name)\"; filename=\"\(filename)\"\r\n".data(using: .utf8)!)
+                body.append("Content-Type: \(mimeType)\r\n\r\n".data(using: .utf8)!)
+            } else {
+                body.append("Content-Disposition: form-data; name=\"\(part.name)\"\r\n\r\n".data(using: .utf8)!)
+            }
+
+            body.append(part.data)
+            body.append("\r\n".data(using: .utf8)!)
+        }
+
+        body.append("--\(boundary)--\r\n".data(using: .utf8)!)
+        return body
     }
 }

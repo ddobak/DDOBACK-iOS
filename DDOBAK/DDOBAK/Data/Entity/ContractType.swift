@@ -10,7 +10,7 @@ enum ContractType: String, CaseIterable, Hashable {
     case 임대차계약서
     case none
     
-    var requestKey: String {
+    var requestParameter: String {
         switch self {
         case .근로계약서: "EMPLOYMENT"
         case .임대차계약서: "RENTAL"

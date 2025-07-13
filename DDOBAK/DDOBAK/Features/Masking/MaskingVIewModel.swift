@@ -17,9 +17,12 @@ final class MaskingViewModel: ObservableObject {
     @Published var documents: [DocumentMetaData]
     @Published var currentImageIndex: Int = 0
     @Published var toolType: ToolType = .marker
-
-    @Published var maskedImages: [UIImage] = .init()
-    @Published var showResultView: Bool = false
+    
+    @Published var ocrContractId: String?
+    @Published var isOcrSuccessful: Bool = false
+    @Published var errorMessage: String?
+    @Published var showErrorAlert: Bool = false
+    @Published var isLoading: Bool = false
     
     var verticalSafeAreaInset: CGFloat
 
@@ -67,7 +70,7 @@ final class MaskingViewModel: ObservableObject {
     }
 
     @MainActor
-    func saveMaskedImages() async {
+    func maskingImages() async -> [UIImage] {
         let result = await withTaskGroup(of: (Int, UIImage).self) { group in
             for (index, canvas) in documents.enumerated() {
                 group.addTask { [self] in
@@ -88,8 +91,57 @@ final class MaskingViewModel: ObservableObject {
             return orderedResults.compactMap { $0 }
         }
 
-        maskedImages = result
-        showResultView = true
+        return result
+    }
+    
+    @MainActor
+    func requestOCR(maskedImages: [UIImage], contractType: ContractType) async {
+        isLoading = true
+        defer { isLoading = false }
+
+        do {
+            // 이미지 파일 파트 생성
+            let fileParts: [MultipartPart] = maskedImages.enumerated().compactMap { index, image in
+                guard let data = image.jpegData(compressionQuality: 1) else {
+                    fatalError()
+                }
+                return MultipartPart(
+                    name: "files",
+                    filename: "image\(index).jpeg",
+                    mimeType: "image/jpeg",
+                    data: data
+                )
+            }
+
+            // contractType 필드 파트 생성
+            let contractTypePart = MultipartPart(
+                name: "contractType",
+                data: Data(contractType.requestParameter.utf8)
+            )
+
+            // 파트 병합 후 Request
+            let parts = fileParts + [contractTypePart]
+            let response: ResponseDTO<OCRContractResult> = try await APIClient.shared.requestMultipart(
+                path: "/contract/ocr",
+                parts: parts
+            )
+            
+            // 에러 처리
+            guard response.success == true else {
+                errorMessage = response.userMessage
+                showErrorAlert = true
+                return
+            }
+            
+            if let ocrContractId = response.data?.contractId {
+                self.ocrContractId = ocrContractId
+                isOcrSuccessful = response.data?.ocrStatus == "success"
+                DDOBakLogger.log(ocrContractId, level: .info, category: .viewModel)
+            }
+            
+        } catch {
+            errorMessage = error.localizedDescription
+        }
     }
 
     // MARK: - Rendering Process

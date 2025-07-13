@@ -10,6 +10,7 @@ import SwiftUI
 struct MaskingView: View {
     
     @Environment(\.dismiss) private var dismiss
+    @Environment(ContractAnalysisFlowModel.self) private var contractAnalysisFlowModel
     
     @StateObject private var viewModel: MaskingViewModel
     @State private var drawingToolWidth: CGFloat = 10
@@ -39,7 +40,14 @@ struct MaskingView: View {
                 dismiss()
             }
             .onTrailingItemTap {
-                Task { await viewModel.saveMaskedImages() }
+                Task {
+                    guard let selectedContractType = contractAnalysisFlowModel.selectedContractType else {
+                        return
+                    }
+                    let maskedImages = await viewModel.maskingImages()
+                    await viewModel.requestOCR(maskedImages: maskedImages,
+                                         contractType: selectedContractType)
+                }
             }
             
             drawingArea
@@ -54,8 +62,16 @@ struct MaskingView: View {
                 .padding(.bottom, 22)
                 .background(Color.mainBlack)
         }
-        .navigationDestination(isPresented: $viewModel.showResultView) {
-            ResultView(images: viewModel.maskedImages)
+        .loadingOverlay(isLoading: $viewModel.isLoading)
+        .alert(viewModel.errorMessage ?? "OCR 과정에서 문제가 발생했어요.", isPresented: $viewModel.showErrorAlert) {
+            Button("확인", role: .cancel) {
+                viewModel.showErrorAlert = false
+            }
+        }
+        .navigationDestination(isPresented: $viewModel.isOcrSuccessful) {
+            if let ocrContractID = viewModel.ocrContractId {
+                DdobakWebView(path: "/ocr?contId=\(ocrContractID)")
+            }
         }
     }
 }

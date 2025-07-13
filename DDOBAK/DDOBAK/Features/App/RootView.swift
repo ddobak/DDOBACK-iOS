@@ -10,6 +10,7 @@ import SwiftUI
 struct RootView: View {
     
     @State private var navigationModel: NavigationModel = .init()
+    @State private var contractAnalysisFlowModel: ContractAnalysisFlowModel = .init()
     
     var body: some View {
         homeView
@@ -21,6 +22,7 @@ private extension RootView {
     @ViewBuilder
     var homeView: some View {
         @Bindable var navigationModel = navigationModel
+        @Bindable var contractAnalysisFlowModel = contractAnalysisFlowModel
         
         NavigationStack(path: $navigationModel.path) {
             HomeView()
@@ -41,6 +43,7 @@ private extension RootView {
                 }
         }
         .environment(navigationModel)
+        .environment(contractAnalysisFlowModel)
     }
 }
 

@@ -10,6 +10,8 @@ import SwiftUI
 struct SelectContractTypeView: View {
     
     @Environment(NavigationModel.self) private var navigationModel
+    @Environment(ContractAnalysisFlowModel.self) private var contractAnalysisFlowModel
+    
     @StateObject private var viewModel: SelectContractTypeViewModel = .init()
     
     private let selectButtonHeight: CGFloat = 130
@@ -56,6 +58,7 @@ struct SelectContractTypeView: View {
                 )
             )
             .onButtonTap {
+                contractAnalysisFlowModel.selectedContractType = viewModel.selectedContractType
                 navigationModel.push(.privacyAgreement)
             }
             .padding(.bottom, 22)
