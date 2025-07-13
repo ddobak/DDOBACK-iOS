@@ -27,7 +27,8 @@ final class HomeViewModel {
 
         do {
             let response: ResponseDTO<AnalysesResult> = try await APIClient.shared.request(
-                path: "/user/analyses"
+                path: "/user/analyses",
+                method: .get
             )
             recentAnalyses = response.data?.contracts
             DDOBakLogger.log(recentAnalyses, level: .info, category: .viewModel)

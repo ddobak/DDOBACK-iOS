@@ -1,5 +1,5 @@
 //
-//  SelectDocumentTypeView.swift
+//  SelectContractTypeView.swift
 //  DDOBAK
 //
 //  Created by 이건우 on 7/6/25.
@@ -7,10 +7,10 @@
 
 import SwiftUI
 
-struct SelectDocumentTypeView: View {
+struct SelectContractTypeView: View {
     
     @Environment(NavigationModel.self) private var navigationModel
-    @StateObject private var viewModel: SelectDocumentTypeViewModel = .init()
+    @StateObject private var viewModel: SelectContractTypeViewModel = .init()
     
     private let selectButtonHeight: CGFloat = 130
     
@@ -51,7 +51,7 @@ struct SelectDocumentTypeView: View {
                 viewData: .init(
                     title: "다음",
                     buttonType: .primary,
-                    isEnabled: viewModel.selectedDocumentType != .none,
+                    isEnabled: viewModel.selectedContractType != .none,
                     isLoading: false
                 )
             )
@@ -64,17 +64,17 @@ struct SelectDocumentTypeView: View {
     }
 }
 
-extension SelectDocumentTypeView {
+extension SelectContractTypeView {
     var selectButtons: some View {
         VStack(spacing: 12) {
-            ForEach(SelectDocumentTypeViewModel.DocumentType.allCases.filter { $0 != .none }, id: \.self) { type in
+            ForEach(ContractType.allCases.filter { $0 != .none }, id: \.self) { type in
                 Button {
-                    viewModel.selectedDocumentType = type
+                    viewModel.selectedContractType = type
                 } label: {
                     RoundedRectangle(cornerRadius: 10)
                         .frame(height: selectButtonHeight)
                         .foregroundStyle(
-                            viewModel.selectedDocumentType == type
+                            viewModel.selectedContractType == type
                             ? .lightBlue
                             : .gray2
                         )
@@ -90,6 +90,6 @@ extension SelectDocumentTypeView {
 }
 
 #Preview {
-    SelectDocumentTypeView()
+    SelectContractTypeView()
         .environment(NavigationModel())
 }

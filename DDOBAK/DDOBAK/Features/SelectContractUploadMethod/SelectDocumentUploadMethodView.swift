@@ -1,5 +1,5 @@
 //
-//  SelectDocumentUploadMethodView.swift
+//  SelectContractUploadMethodView.swift
 //  DDOBAK
 //
 //  Created by 이건우 on 6/21/25.
@@ -9,7 +9,7 @@ import SwiftUI
 import PhotosUI
 import UniformTypeIdentifiers
 
-struct SelectDocumentUploadMethodView: View {
+struct SelectContractUploadMethodView: View {
     
     @Environment(\.safeAreaInsets) private var safeAreaInsets
     @Environment(NavigationModel.self) private var navigationModel
@@ -94,7 +94,7 @@ struct SelectDocumentUploadMethodView: View {
 }
 
 // MARK: Views
-extension SelectDocumentUploadMethodView {
+extension SelectContractUploadMethodView {
     private var guidelineImageSection: some View {
         VStack(spacing: .zero) {
             Image("ddobakSelect")
@@ -140,7 +140,7 @@ extension SelectDocumentUploadMethodView {
 }
 
 // MARK: Methods
-extension SelectDocumentUploadMethodView {
+extension SelectContractUploadMethodView {
     private func handleImageSelection(items: [PhotosPickerItem]) {
         Task {
             selectedImages = .init()
@@ -244,6 +244,6 @@ extension SelectDocumentUploadMethodView {
 }
 
 #Preview {
-    SelectDocumentUploadMethodView()
+    SelectContractUploadMethodView()
         .environment(NavigationModel())
 }

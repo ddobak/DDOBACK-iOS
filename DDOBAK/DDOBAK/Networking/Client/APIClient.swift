@@ -18,7 +18,7 @@ final class APIClient: APIClientInterface {
 
     func request<T: Decodable>(
         path: String,
-        method: HTTPMethod = .get,
+        method: HTTPMethod,
         headers: [String: String] = [:],
         queryItems: [URLQueryItem]? = nil,
         body: Encodable? = nil

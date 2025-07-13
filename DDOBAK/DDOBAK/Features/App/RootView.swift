@@ -28,13 +28,13 @@ private extension RootView {
                     Group {
                         switch destination {
                         case .selectDocumetType:
-                            SelectDocumentTypeView()
+                            SelectContractTypeView()
                             
                         case .privacyAgreement:
                             PrivacyAgreementView()
                             
                         case .selectDocumetUploadMethod:
-                            SelectDocumentUploadMethodView()
+                            SelectContractUploadMethodView()
                         }
                     }
                     .navigationBarBackButtonHidden(true)
