@@ -95,15 +95,14 @@ extension ContractAnalysisInfoCardView {
                 
                 Text("분석 중")
                     .font(.ddobak(.caption2_m12))
-                    .foregroundStyle(.mainBlue)
             }
-            .foregroundStyle(.mainBlue)
+            .foregroundStyle(.gray6)
             
         case .completed:
             if data.toxicCounts > 0 {
                 Text("독소 조항 \(data.toxicCounts)건 발견")
                     .font(.ddobak(.caption2_m12))
-                    .foregroundStyle(.mainRed)
+                    .foregroundStyle(.mainBlue)
             } else {
                 Text("독소 조항 없음")
                     .font(.ddobak(.caption2_m12))

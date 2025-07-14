@@ -130,6 +130,7 @@ extension HomeView {
                 Image("analysis")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: .infinity)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     .buttonShadow()
             }
@@ -140,6 +141,7 @@ extension HomeView {
                 Image("archive")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: .infinity)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     .buttonShadow()
             }
