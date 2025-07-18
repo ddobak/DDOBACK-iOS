@@ -15,6 +15,7 @@ struct HomeView: View {
     
     // for debug
     @State private var isShowingTokenAlert: Bool = false
+    @State private var isShowingMyPageWarning: Bool = false
     @State private var tokenInput: String = ""
     
     var body: some View {
@@ -31,6 +32,14 @@ struct HomeView: View {
                     trailingItem: .icon(type: .myPage)
                 )
             )
+            .onTrailingItemTap {
+                isShowingMyPageWarning = true
+            }
+            .alert("[TestFlight Mode] Cannot Access", isPresented: $isShowingMyPageWarning) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                
+            }
             .zIndex(1)
             
             // MARK: Main Home Area
@@ -196,12 +205,12 @@ extension HomeView {
         .onTapGesture {
             isShowingTokenAlert = true
         }
-        .alert("AccessToken", isPresented: $isShowingTokenAlert) {
+        .alert("[TestFlight Mode] Access Token", isPresented: $isShowingTokenAlert) {
             TextField("Input AccessToken", text: $tokenInput)
-            Button("save") {
+            Button("Save") {
                 UserDefaults.standard.set(tokenInput, forKey: "accessToken")
             }
-            Button("cancel", role: .cancel) { }
+            Button("Cancel", role: .cancel) { }
         } message: {
             
         }
