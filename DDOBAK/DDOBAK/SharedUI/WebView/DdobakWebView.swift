@@ -84,10 +84,11 @@ struct DdobakWebView: UIViewRepresentable {
         
         private func saveWebViewAsPDF() {
             guard let webView else { return }
-            
+
+            let contentSize = webView.scrollView.contentSize
             let config = WKPDFConfiguration()
-            config.rect = webView.bounds
-            
+            config.rect = CGRect(origin: .zero, size: contentSize)
+
             webView.createPDF(configuration: config) { result in
                 switch result {
                 case .success(let data):
