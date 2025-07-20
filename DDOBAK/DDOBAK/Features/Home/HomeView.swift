@@ -66,6 +66,13 @@ struct HomeView: View {
                     Spacer()
                         .frame(height: 36)
                     
+                    howToUse
+                        .padding(.horizontal, 20)
+                    
+                    Spacer()
+                        .frame(height: 36)
+                    
+                    
                     honeyTips
                     
                     #if DEBUG
@@ -184,6 +191,16 @@ extension HomeView {
             .animation(.easeInOut, value: viewModel.recentAnalyses)
             .padding(.horizontal, 20)
         }
+    }
+    
+    @ViewBuilder
+    private var howToUse: some View {
+        Image("howToUse")
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .onTapGesture {
+                navigationModel.push(.howToUse)
+            }
     }
     
     private var honeyTips: some View {
