@@ -38,6 +38,9 @@ private extension RootView {
                         case .selectContractUploadMethod:
                             SelectContractUploadMethodView()
                             
+                        case .archiveList:
+                            ArchiveListView()
+                            
                         case .checkOcrResult(let contractId):
                             CheckOCRResultView(contractId: contractId)
                             

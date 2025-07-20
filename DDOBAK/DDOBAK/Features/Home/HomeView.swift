@@ -153,7 +153,7 @@ extension HomeView {
             }
             
             Button {
-                
+                navigationModel.push(.archiveList)
             } label: {
                 Image("archive")
                     .resizable()

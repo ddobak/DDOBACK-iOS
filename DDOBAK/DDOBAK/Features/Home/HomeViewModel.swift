@@ -19,7 +19,11 @@ final class HomeViewModel {
     @MainActor
     func refresh() async {
         clearData()
+        
+        try? await Task.sleep(nanoseconds: 300_000_000)
+        
         await fetchUserAnalyses()
+        await fetchTips()
     }
     
     /// 홈 화면에서의 분석 결과 요청의 최대 개수는 최근 3개로 고정됩니다.
@@ -66,6 +70,7 @@ final class HomeViewModel {
     
     private func clearData() {
         recentAnalyses = nil
+        tips = nil
     }
     
     private func handleError(error: Error) {
