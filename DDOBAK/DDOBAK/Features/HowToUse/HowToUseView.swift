@@ -12,7 +12,7 @@ struct HowToUseView: View {
     @Environment(NavigationModel.self) private var navigationModel
     @Environment(\.safeAreaInsets) private var safeAreaInsets
     
-    private let urlPath: String = "aaa"
+    private let urlPath: String = "/guide"
     
     var body: some View {
         ZStack(alignment: .top) {
