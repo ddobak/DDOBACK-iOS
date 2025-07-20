@@ -19,16 +19,20 @@ final class HomeViewModel {
         clearData()
         await fetchUserAnalyses()
     }
-
+    
+    /// 홈 화면에서의 분석 결과 요청의 최대 개수는 최근 3개로 고정됩니다.
     @MainActor
-    func fetchUserAnalyses() async {
+    func fetchUserAnalyses(requestCount: Int = 3) async {
         isLoading = true
         defer { isLoading = false }
-
+        
         do {
+            let queryItems = [URLQueryItem(name: "requestCount", value: "\(requestCount)")]
+            
             let response: ResponseDTO<AnalysesResult> = try await APIClient.shared.request(
                 path: "/user/analyses",
-                method: .get
+                method: .get,
+                queryItems: queryItems
             )
             recentAnalyses = response.data?.contracts
             DDOBakLogger.log(recentAnalyses, level: .info, category: .viewModel)
