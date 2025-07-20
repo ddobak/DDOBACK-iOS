@@ -11,6 +11,8 @@ import SwiftUI
 final class HomeViewModel {
     
     var recentAnalyses: [Contract]?
+    var tips: [Tip]?
+    
     var isLoading: Bool = false
     var errorMessage: String?
     
@@ -34,14 +36,40 @@ final class HomeViewModel {
                 method: .get,
                 queryItems: queryItems
             )
+            
             recentAnalyses = response.data?.contracts
             DDOBakLogger.log(recentAnalyses, level: .info, category: .viewModel)
+            
         } catch {
-            errorMessage = error.localizedDescription
+            handleError(error: error)
+        }
+    }
+    
+    @MainActor
+    func fetchTips() async {
+        isLoading = true
+        defer { isLoading = false }
+        
+        do {
+            let response: ResponseDTO<[Tip]> = try await APIClient.shared.request(
+                path: "/tips",
+                method: .get
+            )
+            
+            tips = response.data
+            DDOBakLogger.log(recentAnalyses, level: .info, category: .viewModel)
+            
+        } catch {
+            handleError(error: error)
         }
     }
     
     private func clearData() {
         recentAnalyses = nil
+    }
+    
+    private func handleError(error: Error) {
+        guard let error = error as? APIError else { return }
+        errorMessage = error.localizedDescription
     }
 }

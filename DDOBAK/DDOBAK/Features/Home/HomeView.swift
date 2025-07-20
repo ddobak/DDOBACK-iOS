@@ -88,6 +88,7 @@ struct HomeView: View {
             }
             .task {
                 await viewModel.fetchUserAnalyses()
+                await viewModel.fetchTips()
             }
         }
     }
