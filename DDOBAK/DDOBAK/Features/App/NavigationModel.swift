@@ -42,6 +42,7 @@ extension NavigationModel {
         case selectContractType
         case privacyAgreement
         case selectContractUploadMethod
+        case archive
         case checkOcrResult(contractId: String)
         case analysisResult(contractId: String, analysisId: String)
         case howToUse
