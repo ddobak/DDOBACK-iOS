@@ -7,12 +7,17 @@
 
 import SwiftUI
 
-struct DdobakSectionHeader: View {
+struct DdobakSectionHeader: View, Equatable {
     
     private let title: String
+    private let titleColor: Color
     
-    init(title: String) {
+    init(
+        title: String,
+        titleColor: Color
+    ) {
         self.title = title
+        self.titleColor = titleColor
     }
     
     var body: some View {
@@ -20,15 +25,19 @@ struct DdobakSectionHeader: View {
             Text(title)
                 .lineLimit(1)
                 .font(.ddobak(.body1_b16))
-                .foregroundStyle(.mainBlack)
+                .foregroundStyle(titleColor)
                 .padding(.horizontal, 20)
             
             Spacer()
         }
         .frame(height: 20)
     }
+    
+    static func == (lhs: DdobakSectionHeader, rhs: DdobakSectionHeader) -> Bool {
+        return lhs.title == rhs.title
+    }
 }
 
 #Preview {
-    DdobakSectionHeader(title: "최근 분석 이력")
+    DdobakSectionHeader(title: "최근 분석 이력", titleColor: .mainBlack)
 }
