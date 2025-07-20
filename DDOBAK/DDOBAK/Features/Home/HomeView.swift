@@ -161,7 +161,10 @@ extension HomeView {
     private var recentAnalysesSection: some View {
         
         VStack(spacing: 20) {
-            DdobakSectionHeader(title: "최근 분석 이력")
+            DdobakSectionHeader(
+                title: "최근 분석 이력",
+                titleColor: .mainBlack
+            )
             
             VStack(spacing: 12) {
                 if let recentAnalyses = viewModel.recentAnalyses {
@@ -172,7 +175,7 @@ extension HomeView {
                             }
                     }
                 } else {
-                    ForEach(0..<2, id: \.self) { _ in
+                    ForEach(0..<3, id: \.self) { _ in
                         ContractAnalysisInfoCardView(viewData: .mock())
                             .redacted(reason: .placeholder)
                     }
@@ -184,12 +187,30 @@ extension HomeView {
     }
     
     private var honeyTips: some View {
-        Image("honey")
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .onTapGesture {
-                navigationModel.push(.honeyTip(tipId: "1"))
+        VStack(spacing: 20) {
+            DdobakSectionHeader(
+                title: "또박이의 계약 꿀팁",
+                titleColor: .mainWhite
+            )
+            
+            VStack(spacing: 8) {
+                if let tips = viewModel.tips {
+                    ForEach(tips, id: \.self) { tip in
+                        TipCardView(viewData: tip)
+                    }
+                } else {
+                    ForEach(0..<3, id: \.self) { _ in
+                        TipCardView(viewData: .mock())
+                            .redacted(reason: .placeholder)
+                    }
+                }
             }
+            .padding(.horizontal, 20)
+            .animation(.easeInOut, value: viewModel.tips)
+        }
+        .padding(.top, 20)
+        .padding(.bottom, 24)
+        .background(Color.mainBlue)
     }
 }
 

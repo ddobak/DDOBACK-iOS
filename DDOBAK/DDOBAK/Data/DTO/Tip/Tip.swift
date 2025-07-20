@@ -14,3 +14,15 @@ struct Tip: Decodable, Hashable {
     let tags: [String]
     let url: String
 }
+
+extension Tip {
+    static func mock() -> Tip {
+        .init(
+            id: -1,
+            title: "mockmock",
+            summary: "mockmockmockmockmockmock",
+            tags: ["mock"],
+            url: ""
+        )
+    }
+}
