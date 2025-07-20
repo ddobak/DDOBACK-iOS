@@ -175,11 +175,18 @@ extension HomeView {
             
             VStack(spacing: 12) {
                 if let recentAnalyses = viewModel.recentAnalyses {
-                    ForEach(recentAnalyses, id: \.self) { analysis in
-                        ContractAnalysisInfoCardView(viewData: analysis)
-                            .onCardViewTap { contractId, analysisId in
-                                navigationModel.push(.analysisResult(contractId: contractId, analysisId: analysisId))
-                            }
+                    if recentAnalyses.isEmpty {
+                        Image("emptyAnalysisResult")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .buttonShadow()
+                    } else {
+                        ForEach(recentAnalyses, id: \.self) { analysis in
+                            ContractAnalysisInfoCardView(viewData: analysis)
+                                .onCardViewTap { contractId, analysisId in
+                                    navigationModel.push(.analysisResult(contractId: contractId, analysisId: analysisId))
+                                }
+                        }
                     }
                 } else {
                     ForEach(0..<3, id: \.self) { _ in
