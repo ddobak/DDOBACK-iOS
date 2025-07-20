@@ -193,10 +193,13 @@ extension HomeView {
                 titleColor: .mainWhite
             )
             
-            VStack(spacing: 8) {
+            VStack(spacing: 12) {
                 if let tips = viewModel.tips {
                     ForEach(tips, id: \.self) { tip in
                         TipCardView(viewData: tip)
+                            .onCardViewTap { tipId in
+                                navigationModel.push(.honeyTip(tipId: tipId))
+                            }
                     }
                 } else {
                     ForEach(0..<3, id: \.self) { _ in

@@ -10,7 +10,7 @@ import SwiftUI
 struct TipCardView: View, Equatable {
     
     private let viewData: Tip
-    private var action: (((Int)) -> Void)?
+    private var action: (((String)) -> Void)?
     
     init(viewData: Tip) {
         self.viewData = viewData
@@ -33,7 +33,7 @@ struct TipCardView: View, Equatable {
                 .foregroundStyle(.mainWhite)
         }
         .onTapGesture {
-            action?(viewData.id)
+            action?(viewData.id.description)
         }
     }
     
@@ -76,7 +76,7 @@ extension TipCardView {
 
 // MARK: - Handlers
 extension TipCardView {
-    func onCardViewTap(action: @escaping ((Int)) -> Void) -> Self {
+    func onCardViewTap(action: @escaping ((String)) -> Void) -> Self {
         var newSelf = self
         newSelf.action = action
         return newSelf
