@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Tip: Decodable {
+struct Tip: Decodable, Hashable {
     let id: Int
     let title: String
     let summary: String
