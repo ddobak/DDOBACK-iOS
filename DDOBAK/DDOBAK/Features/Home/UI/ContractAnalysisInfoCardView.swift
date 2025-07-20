@@ -12,6 +12,7 @@ struct ContractAnalysisInfoCardView: View {
     
     @State private var angle: Double = 0
     
+    // FIXME: Change DTO to Domain
     private let viewData: Contract
     private var action: (((String, String)) -> Void)?
     
