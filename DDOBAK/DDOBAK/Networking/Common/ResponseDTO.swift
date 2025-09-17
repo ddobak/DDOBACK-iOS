@@ -15,6 +15,6 @@ struct ResponseDTO<T: Decodable>: Decodable {
     let message: String
     let userMessage: String?
     let data: T?
-    let timestamp: String
-    let traceId: String
+    let timestamp: String?
+    let traceId: String?
 }

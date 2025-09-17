@@ -38,11 +38,17 @@ private extension RootView {
                         case .selectContractUploadMethod:
                             SelectContractUploadMethodView()
                             
+                        case .archiveList:
+                            ArchiveListView()
+                            
                         case .checkOcrResult(let contractId):
                             CheckOCRResultView(contractId: contractId)
                             
                         case .analysisResult(let contractId, let analysisId):
                             AnalysisResultView(contractId: contractId, analysisId: analysisId)
+                            
+                        case .howToUse:
+                            HowToUseView()
                             
                         case .honeyTip(let tipId):
                             HoneyTipView(tipId: tipId)

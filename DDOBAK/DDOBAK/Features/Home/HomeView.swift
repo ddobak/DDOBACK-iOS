@@ -15,6 +15,7 @@ struct HomeView: View {
     
     // for debug
     @State private var isShowingTokenAlert: Bool = false
+    @State private var isShowingMyPageWarning: Bool = false
     @State private var tokenInput: String = ""
     
     var body: some View {
@@ -31,6 +32,14 @@ struct HomeView: View {
                     trailingItem: .icon(type: .myPage)
                 )
             )
+            .onTrailingItemTap {
+                isShowingMyPageWarning = true
+            }
+            .alert("[TestFlight Mode] Cannot Access", isPresented: $isShowingMyPageWarning) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                
+            }
             .zIndex(1)
             
             // MARK: Main Home Area
@@ -57,6 +66,13 @@ struct HomeView: View {
                     Spacer()
                         .frame(height: 36)
                     
+                    howToUse
+                        .padding(.horizontal, 20)
+                    
+                    Spacer()
+                        .frame(height: 36)
+                    
+                    
                     honeyTips
                     
                     #if DEBUG
@@ -79,6 +95,7 @@ struct HomeView: View {
             }
             .task {
                 await viewModel.fetchUserAnalyses()
+                await viewModel.fetchTips()
             }
         }
     }
@@ -136,7 +153,7 @@ extension HomeView {
             }
             
             Button {
-                
+                navigationModel.push(.archiveList)
             } label: {
                 Image("archive")
                     .resizable()
@@ -151,18 +168,28 @@ extension HomeView {
     private var recentAnalysesSection: some View {
         
         VStack(spacing: 20) {
-            DdobakSectionHeader(title: "최근 분석 이력")
+            DdobakSectionHeader(
+                title: "최근 분석 이력",
+                titleColor: .mainBlack
+            )
             
             VStack(spacing: 12) {
                 if let recentAnalyses = viewModel.recentAnalyses {
-                    ForEach(recentAnalyses, id: \.self) { analysis in
-                        ContractAnalysisInfoCardView(viewData: analysis)
-                            .onCardViewTap { contractId, analysisId in
-                                navigationModel.push(.analysisResult(contractId: contractId, analysisId: analysisId))
-                            }
+                    if recentAnalyses.isEmpty {
+                        Image("emptyAnalysisResult")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .buttonShadow()
+                    } else {
+                        ForEach(recentAnalyses, id: \.self) { analysis in
+                            ContractAnalysisInfoCardView(viewData: analysis)
+                                .onCardViewTap { contractId, analysisId in
+                                    navigationModel.push(.analysisResult(contractId: contractId, analysisId: analysisId))
+                                }
+                        }
                     }
                 } else {
-                    ForEach(0..<2, id: \.self) { _ in
+                    ForEach(0..<3, id: \.self) { _ in
                         ContractAnalysisInfoCardView(viewData: .mock())
                             .redacted(reason: .placeholder)
                     }
@@ -173,13 +200,44 @@ extension HomeView {
         }
     }
     
-    private var honeyTips: some View {
-        Image("honey")
+    @ViewBuilder
+    private var howToUse: some View {
+        Image("howToUse")
             .resizable()
             .aspectRatio(contentMode: .fit)
             .onTapGesture {
-                navigationModel.push(.honeyTip(tipId: "1"))
+                navigationModel.push(.howToUse)
             }
+    }
+    
+    private var honeyTips: some View {
+        VStack(spacing: 20) {
+            DdobakSectionHeader(
+                title: "또박이의 계약 꿀팁",
+                titleColor: .mainWhite
+            )
+            
+            VStack(spacing: 12) {
+                if let tips = viewModel.tips {
+                    ForEach(tips, id: \.self) { tip in
+                        TipCardView(viewData: tip)
+                            .onCardViewTap { tipId in
+                                navigationModel.push(.honeyTip(tipId: tipId))
+                            }
+                    }
+                } else {
+                    ForEach(0..<3, id: \.self) { _ in
+                        TipCardView(viewData: .mock())
+                            .redacted(reason: .placeholder)
+                    }
+                }
+            }
+            .padding(.horizontal, 20)
+            .animation(.easeInOut, value: viewModel.tips)
+        }
+        .padding(.top, 20)
+        .padding(.bottom, 24)
+        .background(Color.mainBlue)
     }
 }
 
@@ -196,12 +254,12 @@ extension HomeView {
         .onTapGesture {
             isShowingTokenAlert = true
         }
-        .alert("AccessToken", isPresented: $isShowingTokenAlert) {
+        .alert("[TestFlight Mode] Access Token", isPresented: $isShowingTokenAlert) {
             TextField("Input AccessToken", text: $tokenInput)
-            Button("save") {
+            Button("Save") {
                 UserDefaults.standard.set(tokenInput, forKey: "accessToken")
             }
-            Button("cancel", role: .cancel) { }
+            Button("Cancel", role: .cancel) { }
         } message: {
             
         }

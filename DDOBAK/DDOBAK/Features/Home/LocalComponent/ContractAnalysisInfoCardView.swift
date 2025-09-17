@@ -8,10 +8,11 @@
 import SwiftUI
 
 /// 계약서 분석 결과 정보를 표시하는 `Card View`
-struct ContractAnalysisInfoCardView: View {
+struct ContractAnalysisInfoCardView: View, Equatable {
     
     @State private var angle: Double = 0
     
+    // FIXME: Change DTO to Domain
     private let viewData: Contract
     private var action: (((String, String)) -> Void)?
     
@@ -64,6 +65,10 @@ struct ContractAnalysisInfoCardView: View {
                 action?((viewData.contractId, viewData.analysisId))
             }
         }
+    }
+    
+    static func == (lhs: ContractAnalysisInfoCardView, rhs: ContractAnalysisInfoCardView) -> Bool {
+        return lhs.viewData == rhs.viewData
     }
 }
 
