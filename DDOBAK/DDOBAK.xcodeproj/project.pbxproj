@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		C628ECE12E8CD5AD000D08CA /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = C628ECE02E8CD5AD000D08CA /* Alamofire */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		C6E6227A2E06829600166DB4 /* DDOBAK.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DDOBAK.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -41,6 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C628ECE12E8CD5AD000D08CA /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -85,6 +90,7 @@
 			);
 			name = DDOBAK;
 			packageProductDependencies = (
+				C628ECE02E8CD5AD000D08CA /* Alamofire */,
 			);
 			productName = DDOBAK;
 			productReference = C6E6227A2E06829600166DB4 /* DDOBAK.app */;
@@ -115,6 +121,7 @@
 			mainGroup = C6E622712E06829600166DB4;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				C628ECDF2E8CD5AD000D08CA /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C6E6227B2E06829600166DB4 /* Products */;
@@ -372,6 +379,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C628ECDF2E8CD5AD000D08CA /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C628ECE02E8CD5AD000D08CA /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C628ECDF2E8CD5AD000D08CA /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C6E622722E06829600166DB4 /* Project object */;
 }
