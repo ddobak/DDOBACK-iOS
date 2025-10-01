@@ -8,13 +8,17 @@
 import SwiftUI
 
 struct MaskingView: View {
-
+    
     @Environment(NavigationModel.self) private var navigationModel
     @Environment(ContractAnalysisFlowModel.self) private var contractAnalysisFlowModel
     @Environment(\.dismiss) private var dismiss
     
     @StateObject private var viewModel: MaskingViewModel
     @State private var drawingToolWidth: CGFloat = 10
+    
+    // MARK: DragGesture State Value
+    @State private var scale: CGFloat = 1
+    @State private var lastScale: CGFloat = 1
     
     init(
         documentImages: [UIImage],
@@ -47,7 +51,7 @@ struct MaskingView: View {
                     }
                     let maskedImages = await viewModel.maskingImages()
                     await viewModel.requestOCR(maskedImages: maskedImages,
-                                         contractType: selectedContractType)
+                                               contractType: selectedContractType)
                 }
             }
             
@@ -77,6 +81,20 @@ struct MaskingView: View {
     }
 }
 
+// MARK: Gesture
+extension MaskingView {
+    
+    var magnifyGesture: some Gesture {
+        MagnifyGesture()
+            .onChanged { value in
+                scale = lastScale * value.magnification
+            }
+            .onEnded { _ in
+                lastScale = scale
+            }
+    }
+}
+
 // MARK: - View Components
 extension MaskingView {
     private var drawingArea: some View {
@@ -84,7 +102,8 @@ extension MaskingView {
             Image(uiImage: viewModel.currentImage)
                 .resizable()
                 .scaledToFit()
-
+                .scaleEffect(scale)
+            
             CanvasRepresentingView(
                 viewModel: viewModel,
                 drawing: $viewModel.documents[viewModel.currentImageIndex].drawing,
@@ -92,8 +111,13 @@ extension MaskingView {
             )
             .frame(width: viewModel.getCanvasSize().width)
             .id(viewModel.currentImageIndex)
+            .scaleEffect(scale)
         }
-        .frame(maxWidth: .infinity)
+        .clipped()
+        .simultaneousGesture(magnifyGesture)
+        .onAppear {
+            print(viewModel.getCanvasSize().width, UIScreen.main.bounds.width)
+        }
     }
     
     private var imageSelector: some View {
