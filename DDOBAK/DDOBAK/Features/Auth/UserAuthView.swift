@@ -17,7 +17,7 @@ struct UserAuthView: View {
                 onCompletion: handleAppleCompletion(result:)
             )
             .signInWithAppleButtonStyle(.black)
-            .frame(height: 50)
+            .frame(height: 52)
             .clipShape(RoundedRectangle(cornerRadius: 12))
         }
         .padding()
@@ -49,7 +49,7 @@ struct UserAuthView: View {
                 // TODO: 서버 로직
                 print("[Apple SignIn Success]")
                 print("userID:", userID)
-                print("identityToken:", identityToken)
+                print("identityToken:", identityToken ?? "unknown")
                 print("fullName:", fullName?.formatted() ?? "unknown")
                 print("email:", email ?? "unknown")
             }
