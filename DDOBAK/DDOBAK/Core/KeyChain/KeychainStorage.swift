@@ -6,30 +6,45 @@
 //
 
 import Foundation
+import Security
 
-protocol KeychainStorageProtocol {
-    func save(token: String, for key: String)
-    func read(for key: String) -> String?
-    func delete(for key: String)
+protocol AuthTokenStore {
+    var accessToken: String? { get set }
+    var refreshToken: String? { get set }
+    func clear()
 }
 
-final class KeychainStorage: KeychainStorageProtocol {
-    static let shared = KeychainStorage()
+final class KeychainTokenStore: AuthTokenStore {
+    private let accessKey = KeyChainKey.accessToken.rawValue
+    private let refreshKey = KeyChainKey.accessToken.rawValue
 
-    func save(token: String, for key: String) {
-        let data = Data(token.utf8)
+    var accessToken: String? {
+        get { read(for: accessKey) }
+        set { save(newValue, for: accessKey) }
+    }
+    var refreshToken: String? {
+        get { read(for: refreshKey) }
+        set { save(newValue, for: refreshKey) }
+    }
+
+    func clear() {
+        delete(for: accessKey)
+        delete(for: refreshKey)
+    }
+
+    private func save(_ value: String?, for key: String) {
+        delete(for: key)
+        guard let value = value else { return }
+        let data = Data(value.utf8)
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: key,
             kSecValueData as String: data
         ]
-        
-        /// 기존 값 제거
-        SecItemDelete(query as CFDictionary)
         SecItemAdd(query as CFDictionary, nil)
     }
 
-    func read(for key: String) -> String? {
+    private func read(for key: String) -> String? {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: key,
@@ -38,12 +53,11 @@ final class KeychainStorage: KeychainStorageProtocol {
         ]
         var item: AnyObject?
         SecItemCopyMatching(query as CFDictionary, &item)
-        guard let data = item as? Data,
-              let token = String(data: data, encoding: .utf8) else { return nil }
-        return token
+        guard let data = item as? Data else { return nil }
+        return String(data: data, encoding: .utf8)
     }
 
-    func delete(for key: String) {
+    private func delete(for key: String) {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: key
