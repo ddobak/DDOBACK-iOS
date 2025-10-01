@@ -35,15 +35,20 @@ struct CanvasRepresentingView: UIViewRepresentable {
         let canvas = PKCanvasView()
         canvas.delegate = context.coordinator
         canvas.drawing = drawing
-        canvas.tool = pkToolType()
         canvas.drawingPolicy = .anyInput
         canvas.backgroundColor = .clear
         canvas.isOpaque = false
+        if let tool = pkToolType() {
+            canvas.tool = tool
+        }
+        
         return canvas
     }
 
     func updateUIView(_ canvas: PKCanvasView, context: Context) {
-        canvas.tool = pkToolType()
+        if let tool = pkToolType() {
+            canvas.tool = tool
+        }
 
         DispatchQueue.main.async {
             if canvas.drawing != drawing {
@@ -52,12 +57,16 @@ struct CanvasRepresentingView: UIViewRepresentable {
         }
     }
 
-    private func pkToolType() -> PKTool {
+    private func pkToolType() -> PKTool? {
         switch viewModel.toolType {
         case .marker:
             return PKInkingTool(.marker, color: .black, width: toolWidth)
+            
         case .eraser:
             return PKEraserTool(.bitmap, width: toolWidth)
+            
+        case .disabled:
+            return nil
         }
     }
 }

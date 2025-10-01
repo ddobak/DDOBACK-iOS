@@ -19,6 +19,9 @@ struct MaskingView: View {
     // MARK: DragGesture State Value
     @State private var scale: CGFloat = 1
     @State private var lastScale: CGFloat = 1
+    @State private var offset: CGSize = .zero
+    @State private var lastOffset: CGSize = .zero
+    @State private var isZooming: Bool = false
     
     init(
         documentImages: [UIImage],
@@ -87,10 +90,41 @@ extension MaskingView {
     var magnifyGesture: some Gesture {
         MagnifyGesture()
             .onChanged { value in
-                scale = lastScale * value.magnification
+                /// 최소 축소 비율 1로 설정
+                scale = max(1, lastScale * value.magnification)
             }
             .onEnded { _ in
+                /// `scale`비율로 `zoom` 상태 판단
                 lastScale = scale
+                isZooming = lastScale > 1
+                
+                /// `zooming` 상태에 따라 `penGesture`를 위해  `marker` 기능 해제
+                let toolTypeByZoomState: MaskingViewModel.ToolType = isZooming ? .disabled : .marker
+                viewModel.setToolType(type: toolTypeByZoomState)
+                
+                /// 최소 비율로 왔을 때 `offset` 초기화
+                if lastScale == 1 {
+                    offset = .zero
+                    lastOffset = .zero
+                }
+            }
+    }
+    
+    var panGesture: some Gesture {
+        DragGesture()
+            .onChanged { value in
+                
+                /// `zooming` 중이면서 `toolType`이 `.disabled`일때만 `panGesture` 허용
+                guard isZooming == true && viewModel.toolType == .disabled else { return }
+                
+                offset = CGSize(
+                    width: lastOffset.width + value.translation.width,
+                    height: lastOffset.height + value.translation.height
+                )
+            }
+            .onEnded { _ in
+                guard scale > 1 else { return }
+                lastOffset = offset
             }
     }
 }
@@ -102,6 +136,7 @@ extension MaskingView {
             Image(uiImage: viewModel.currentImage)
                 .resizable()
                 .scaledToFit()
+                .offset(offset)
                 .scaleEffect(scale)
             
             CanvasRepresentingView(
@@ -110,14 +145,14 @@ extension MaskingView {
                 toolWidth: drawingToolWidth
             )
             .frame(width: viewModel.getCanvasSize().width)
+            .allowsHitTesting(viewModel.toolType != .disabled)
             .id(viewModel.currentImageIndex)
+            .offset(offset)
             .scaleEffect(scale)
         }
         .clipped()
         .simultaneousGesture(magnifyGesture)
-        .onAppear {
-            print(viewModel.getCanvasSize().width, UIScreen.main.bounds.width)
-        }
+        .simultaneousGesture(panGesture)
     }
     
     private var imageSelector: some View {

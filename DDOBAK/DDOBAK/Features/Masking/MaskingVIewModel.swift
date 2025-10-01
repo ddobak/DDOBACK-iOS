@@ -164,11 +164,13 @@ extension MaskingViewModel {
     enum ToolType: CaseIterable {
         case marker
         case eraser
+        case disabled
 
         var displayName: String {
             switch self {
             case .marker: return "그리기"
             case .eraser: return "지우개"
+            case .disabled: return ""
             }
         }
         
@@ -176,6 +178,7 @@ extension MaskingViewModel {
             switch self {
             case .marker: return "brush"
             case .eraser: return "eraser"
+            case .disabled: return ""
             }
         }
     }
