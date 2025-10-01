@@ -157,7 +157,7 @@
 		C6E622832E06829700166DB4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = C67337EA2E1EAF3B00571C3D /* Config */;
-			baseConfigurationReferenceRelativePath = "XCConfigs/DDOBAK-Debug.xcconfig";
+			baseConfigurationReferenceRelativePath = "DDOBAK-Debug.xcconfig";
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -223,7 +223,7 @@
 		C6E622842E06829700166DB4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = C67337EA2E1EAF3B00571C3D /* Config */;
-			baseConfigurationReferenceRelativePath = "XCConfigs/DDOBAK-Prod.xcconfig";
+			baseConfigurationReferenceRelativePath = "DDOBAK-Prod.xcconfig";
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -282,7 +282,7 @@
 		C6E622862E06829700166DB4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = C67337EA2E1EAF3B00571C3D /* Config */;
-			baseConfigurationReferenceRelativePath = "XCConfigs/DDOBAK-Debug.xcconfig";
+			baseConfigurationReferenceRelativePath = "DDOBAK-Debug.xcconfig";
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -321,7 +321,7 @@
 		C6E622872E06829700166DB4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = C67337EA2E1EAF3B00571C3D /* Config */;
-			baseConfigurationReferenceRelativePath = "XCConfigs/DDOBAK-Prod.xcconfig";
+			baseConfigurationReferenceRelativePath = "DDOBAK-Prod.xcconfig";
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
