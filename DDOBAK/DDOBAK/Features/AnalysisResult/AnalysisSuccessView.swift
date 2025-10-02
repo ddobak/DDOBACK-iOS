@@ -8,6 +8,22 @@
 import SwiftUI
 
 struct AnalysisSuccessView: View {
+    
+    private let toxicClauseCount: Int
+    private let tagAttributeString: AttributedString
+    
+    private let analysisSuccessImageName: String = "analysisSuccess"
+    private let successText: String = "또박또박 다 읽었어요!"
+    private let successSubText: String = "주의가 필요한 조항이 보여요!\n또박이의 리포트로 확인해볼까요?"
+    private let buttonText: String = "또박이 리포트보기"
+    
+    init(toxicClauseCount: Int) {
+        self.toxicClauseCount = toxicClauseCount
+        tagAttributeString = .makeAttributedString(text: "독소 조항 발견 개수 : \(toxicClauseCount)개",
+                                                   boldText: ["\(toxicClauseCount)개"],
+                                                   baseFont: .body2_m14)
+    }
+    
     var body: some View {
         VStack {
             TopNavigationBar(
@@ -25,13 +41,34 @@ struct AnalysisSuccessView: View {
             
             Spacer()
             
-            // image
+            Image(analysisSuccessImageName)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .padding(.horizontal, 20)
+            
+            DdobakPageTitle(
+                viewData: .init(
+                    title: successText,
+                    subtitleType: .normal(successSubText),
+                    alignment: .center
+                )
+            )
+            .padding(.bottom, 20)
+            
+            DdobakTag(
+                viewData: .init(
+                    title: tagAttributeString,
+                    titleColor: .mainBlue,
+                    backgroundColor: .lightBlue,
+                    borderColor: .mainBlue
+                )
+            )
             
             Spacer()
             
             DdobakButton(
                 viewData: .init(
-                    title: "또박이 리포트보기",
+                    title: buttonText,
                     buttonType: .primary,
                     isEnabled: true,
                     isLoading: false
@@ -45,5 +82,5 @@ struct AnalysisSuccessView: View {
 }
 
 #Preview {
-    AnalysisSuccessView()
+    AnalysisSuccessView(toxicClauseCount: 3)
 }
