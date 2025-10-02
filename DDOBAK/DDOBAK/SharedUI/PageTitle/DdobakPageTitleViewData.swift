@@ -29,7 +29,14 @@ enum DdobakPageTitleAlignment {
     case leading
     case center
 
-    var swiftUIAlignment: Alignment {
+    var frameAlignment: Alignment {
+        switch self {
+        case .leading: return .leading
+        case .center: return .center
+        }
+    }
+    
+    var multiLineTextAlignment: TextAlignment {
         switch self {
         case .leading: return .leading
         case .center: return .center

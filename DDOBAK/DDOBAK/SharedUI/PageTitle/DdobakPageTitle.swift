@@ -32,14 +32,16 @@ struct DdobakPageTitle: View, Equatable {
             Text(viewData.title)
                 .font(.ddobak(.title1_sb28))
                 .lineLimit(2)
-                .frame(maxWidth: .infinity, alignment: viewData.alignment.swiftUIAlignment)
+                .multilineTextAlignment(viewData.alignment.multiLineTextAlignment)
+                .frame(maxWidth: .infinity, alignment: viewData.alignment.frameAlignment)
             
             if let subTitle {
                 Text(subTitle)
                     .font(.ddobak(.body2_m14))
-                    .lineLimit(2)
                     .foregroundStyle(viewData.subtitleType?.subTitleColor ?? .clear)
-                    .frame(maxWidth: .infinity, alignment: viewData.alignment.swiftUIAlignment)
+                    .lineLimit(2)
+                    .multilineTextAlignment(viewData.alignment.multiLineTextAlignment)
+                    .frame(maxWidth: .infinity, alignment: viewData.alignment.frameAlignment)
             }
         }
         .padding(.horizontal, 20)
