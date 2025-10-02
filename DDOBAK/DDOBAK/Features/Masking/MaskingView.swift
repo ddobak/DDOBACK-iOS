@@ -108,8 +108,6 @@ extension MaskingView {
                     offset = .zero
                     lastOffset = .zero
                 }
-                
-                print("확대된 캔버스 크기:", viewModel.getCanvasSize().height * scale, "영역 크기:", drawingAreaSize.height)
             }
     }
     
