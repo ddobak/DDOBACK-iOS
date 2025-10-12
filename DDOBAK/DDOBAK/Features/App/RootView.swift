@@ -12,6 +12,8 @@ struct RootView: View {
     @State private var navigationModel: NavigationModel = .init()
     @State private var contractAnalysisFlowModel: ContractAnalysisFlowModel = .init()
     
+    @AppStorage("isLoggedIn") var isLoggedIn: Bool = false
+    
     var body: some View {
         rootView
     }
@@ -21,7 +23,6 @@ private extension RootView {
     
     @ViewBuilder
     var rootView: some View {
-        @AppStorage("isLoggedIn") var isLoggedIn: Bool = false
         @Bindable var navigationModel = navigationModel
         @Bindable var contractAnalysisFlowModel = contractAnalysisFlowModel
         
