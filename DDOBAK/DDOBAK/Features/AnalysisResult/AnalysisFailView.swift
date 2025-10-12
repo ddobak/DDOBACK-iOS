@@ -9,6 +9,8 @@ import SwiftUI
 
 struct AnalysisFailView: View {
     
+    @Environment(NavigationModel.self) private var navigationModel
+    
     private let analysisFailImageName: String = "analysisFail"
     private let failText: String = "흠...\n이건 조금 어려운 문서네요!"
     private let failSubText: String = "또박이가 분석에 실패했어요...\n계약서가 아닌 사진을 업로드하지는 않았는지 확인해주세요!"
@@ -27,7 +29,10 @@ struct AnalysisFailView: View {
                 )
             )
             .setAppearance(.light)
-            
+            .onLeadingItemTap {
+                navigationModel.pop()
+            }
+            .zIndex(1)
             
             Spacer()
             

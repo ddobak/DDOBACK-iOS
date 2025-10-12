@@ -9,7 +9,12 @@ import SwiftUI
 
 struct AnalysisSuccessView: View {
     
+    @Environment(NavigationModel.self) private var navigationModel
+    
     private let toxicClauseCount: Int
+    private let contractId: String
+    private let analysisId: String
+    
     private let tagAttributeString: AttributedString
     
     private let analysisSuccessImageName: String = "analysisSuccess"
@@ -17,8 +22,15 @@ struct AnalysisSuccessView: View {
     private let successSubText: String = "주의가 필요한 조항이 보여요!\n또박이의 리포트로 확인해볼까요?"
     private let buttonText: String = "또박이 리포트보기"
     
-    init(toxicClauseCount: Int) {
+    init(
+        toxicClauseCount: Int,
+        contractId: String,
+        analysisId: String
+    ) {
         self.toxicClauseCount = toxicClauseCount
+        self.contractId = contractId
+        self.analysisId = analysisId
+        
         tagAttributeString = .makeAttributedString(text: "독소 조항 발견 개수 : \(toxicClauseCount)개",
                                                    boldText: ["\(toxicClauseCount)개"],
                                                    baseFont: .body2_m14)
@@ -37,7 +49,10 @@ struct AnalysisSuccessView: View {
                 )
             )
             .setAppearance(.light)
-            
+            .onLeadingItemTap {
+                navigationModel.pop()
+            }
+            .zIndex(1)
             
             Spacer()
             
@@ -74,6 +89,9 @@ struct AnalysisSuccessView: View {
                     isLoading: false
                 )
             )
+            .onButtonTap {
+                navigationModel.push(.analysisResult(contractId: contractId, analysisId: analysisId))
+            }
             .padding(.bottom, 22)
         }
         .containerRelativeFrame([.horizontal, .vertical])
@@ -82,5 +100,5 @@ struct AnalysisSuccessView: View {
 }
 
 #Preview {
-    AnalysisSuccessView(toxicClauseCount: 3)
+    AnalysisSuccessView(toxicClauseCount: 3, contractId: "1", analysisId: "1")
 }

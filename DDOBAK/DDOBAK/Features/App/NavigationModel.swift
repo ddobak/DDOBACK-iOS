@@ -44,6 +44,7 @@ extension NavigationModel {
         case selectContractUploadMethod
         case archiveList
         case checkOcrResult(contractId: String)
+        case analysisStatus(analysisStatus: Contract.AnalysisStatus, contractData: Contract)
         case analysisResult(contractId: String, analysisId: String)
         case howToUse
         case honeyTip(tipId: String)

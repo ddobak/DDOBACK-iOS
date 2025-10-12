@@ -70,8 +70,12 @@ extension ArchiveListView {
                 } else {
                     ForEach(analyses, id: \.self) { analysis in
                         ContractAnalysisInfoCardView(viewData: analysis)
-                            .onCardViewTap { contractId, analysisId in
-                                navigationModel.push(.analysisResult(contractId: contractId, analysisId: analysisId))
+                            .onCardViewTap { contractData in
+                                /// `ArchiveList`에서 분석 `cardView` 선택 시 `analysisStatus` 생략하고 바로 결과 페이지 노출됨.
+                                navigationModel.push(.analysisResult(contractId: contractData.contractId,
+                                                                     analysisId: contractData.analysisId))
+                                
+                                
                             }
                     }
                 }

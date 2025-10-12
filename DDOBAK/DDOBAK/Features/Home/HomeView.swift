@@ -183,8 +183,10 @@ extension HomeView {
                     } else {
                         ForEach(recentAnalyses, id: \.self) { analysis in
                             ContractAnalysisInfoCardView(viewData: analysis)
-                                .onCardViewTap { contractId, analysisId in
-                                    navigationModel.push(.analysisResult(contractId: contractId, analysisId: analysisId))
+                                .onCardViewTap { contractData in
+                                    /// `HomeView`에서 분석 `cardView` 선택 시 `analysisStatus` 노출 (이후에 결과 페이지 노출됨)
+                                    navigationModel.push(.analysisStatus(analysisStatus: contractData.analysisStatus,
+                                                                         contractData: contractData))
                                 }
                         }
                     }

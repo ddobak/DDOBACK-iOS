@@ -44,6 +44,10 @@ private extension RootView {
                         case .checkOcrResult(let contractId):
                             CheckOCRResultView(contractId: contractId)
                             
+                        case .analysisStatus(let analysisStatus, let contractData):
+                            buildAnalysisStatusView(analysisStatus: analysisStatus,
+                                                    contractData: contractData)
+                            
                         case .analysisResult(let contractId, let analysisId):
                             AnalysisResultView(contractId: contractId, analysisId: analysisId)
                             
@@ -59,6 +63,22 @@ private extension RootView {
         }
         .environment(navigationModel)
         .environment(contractAnalysisFlowModel)
+    }
+    
+    @ViewBuilder
+    private func buildAnalysisStatusView(analysisStatus: Contract.AnalysisStatus, contractData: Contract) -> some View {
+        switch analysisStatus {
+        case .completed:
+            AnalysisSuccessView(toxicClauseCount: contractData.toxicCounts,
+                                contractId: contractData.contractId,
+                                analysisId: contractData.analysisId)
+            
+        case .failed:
+            AnalysisFailView()
+        
+        case .inProgress:
+            EmptyView()
+        }
     }
 }
 
