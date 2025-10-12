@@ -1,5 +1,5 @@
 //
-//  KeychainStorage.swift
+//  KeyChainStorage.swift
 //  DDOBAK
 //
 //  Created by 이건우 on 10/1/25.
@@ -14,7 +14,7 @@ protocol AuthTokenStore {
     func clear()
 }
 
-final class KeychainTokenStore: AuthTokenStore {
+final class KeyChainTokenStore: AuthTokenStore {
     private let accessKey = KeyChainKey.accessToken.rawValue
     private let refreshKey = KeyChainKey.accessToken.rawValue
 

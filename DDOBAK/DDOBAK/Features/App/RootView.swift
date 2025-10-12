@@ -13,7 +13,8 @@ struct RootView: View {
     @State private var contractAnalysisFlowModel: ContractAnalysisFlowModel = .init()
     
     var body: some View {
-        homeView
+        // homeView
+        UserAuthView()
     }
 }
 

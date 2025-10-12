@@ -6,17 +6,31 @@
 //
 
 import Foundation
+import Alamofire
 
-// MARK: - APIClient Implementation
+// MARK: - APIClient Implementation (Alamofire)
 
 final class APIClient: APIClientInterface {
-    
+
     static let shared = APIClient()
-    private init() {}
 
-    private let session = URLSession.shared
+    private let session: Session
+    private let tokenStore: TokenStore
 
-    
+    private init() {
+        let tokenStore = DefaultTokenStore()
+        self.tokenStore = tokenStore
+
+        let interceptor = AuthInterceptor(tokenStore: tokenStore)
+        let configuration = URLSessionConfiguration.af.default
+        configuration.timeoutIntervalForRequest = 60
+        configuration.timeoutIntervalForResource = 60
+
+        let logger = NetworkLogger()
+        self.session = Session(configuration: configuration, interceptor: interceptor, eventMonitors: [logger])
+    }
+
+    // MARK: - Public Request
     func request<T: Decodable>(
         path: String,
         method: HTTPMethod,
@@ -25,57 +39,46 @@ final class APIClient: APIClientInterface {
         body: Encodable? = nil
     ) async throws -> ResponseDTO<T> {
 
-        guard let baseURLString = Bundle.main.infoDictionary?["BASE_URL"] as? String,
-              let _ = URL(string: baseURLString) else {
-            fatalError("❌ Invalid or missing BASE_URL in Info.plist")
-        }
-        
-        guard var urlComponents = URLComponents(string: baseURLString + path) else {
-            throw APIError.invalidURL
-        }
+        let baseURLString = try Self.baseURLString()
+        guard var components = URLComponents(string: baseURLString + path) else { throw APIError.invalidURL }
+        components.queryItems = queryItems
+        guard let url = components.url else { throw APIError.invalidURL }
 
-        urlComponents.queryItems = queryItems
+        var urlRequest = URLRequest(url: url)
+        urlRequest.method = method.toAF()
 
-        guard let url = urlComponents.url else {
-            throw APIError.invalidURL
-        }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = method.rawValue
-
-        headers.forEach { key, value in
-            request.setValue(value, forHTTPHeaderField: key)
-        }
-
-        if let token = UserDefaults.standard.string(forKey: "accessToken") {
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        }
+        // set headers
+        headers.forEach { urlRequest.setValue($0.value, forHTTPHeaderField: $0.key) }
 
         if let body = body {
-            request.httpBody = try JSONEncoder().encode(body)
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            urlRequest.httpBody = try JSONEncoder().encode(AnyEncodable(body))
+            urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         }
 
-        let (data, response) = try await session.data(for: request)
+        let dataResponse = await session.request(urlRequest)
+            .validate(statusCode: 200..<300)
+            .serializingData()
+            .response
 
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw APIError.invalidResponse
-        }
-
-        guard (200..<300).contains(httpResponse.statusCode) else {
-            throw APIError.statusCode(httpResponse.statusCode)
-        }
-
-        do {
-            let decoded = try JSONDecoder().decode(ResponseDTO<T>.self, from: data)
-            return decoded
-        } catch {
-            error.handleDecodingError()
-            throw APIError.decoding(error)
+        switch dataResponse.result {
+        case .success(let data):
+            do {
+                let decoded = try JSONDecoder().decode(ResponseDTO<T>.self, from: data)
+                return decoded
+            } catch {
+                error.handleDecodingError()
+                throw APIError.decoding(error)
+            }
+        case .failure:
+            if let statusCode = dataResponse.response?.statusCode {
+                throw APIError.statusCode(statusCode)
+            } else {
+                throw APIError.invalidResponse
+            }
         }
     }
-    
-    
+
+    // MARK: - Multipart Request
     func requestMultipart<T: Decodable>(
         path: String,
         method: HTTPMethod = .post,
@@ -83,68 +86,76 @@ final class APIClient: APIClientInterface {
         parts: [MultipartPart]
     ) async throws -> ResponseDTO<T> {
 
-        guard let baseURLString = Bundle.main.object(forInfoDictionaryKey: "BASE_URL") as? String,
-              let baseURL = URL(string: baseURLString) else {
-            fatalError("❌ Invalid or missing BASE_URL in Info.plist")
-        }
+        let baseURLString = try Self.baseURLString()
+        let url = try baseURLString.appendingPathComponentSafe(path)
 
-        let url = baseURL.appendingPathComponent(path)
-        var request = URLRequest(url: url)
-        request.httpMethod = method.rawValue
+        let afHeaders = HTTPHeaders(headers.map { HTTPHeader(name: $0.key, value: $0.value) })
 
-        headers.forEach { key, value in
-            request.setValue(value, forHTTPHeaderField: key)
-        }
+        let dataResponse = await session.upload(multipartFormData: { formData in
+            for part in parts {
+                if let filename = part.filename, let mimeType = part.mimeType {
+                    formData.append(part.data, withName: part.name, fileName: filename, mimeType: mimeType)
+                } else {
+                    formData.append(part.data, withName: part.name)
+                }
+            }
+        }, to: url, method: method.toAF(), headers: afHeaders)
+        .validate(statusCode: 200..<300)
+        .serializingData()
+        .response
 
-        if let token = UserDefaults.standard.string(forKey: "accessToken") {
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        }
-
-        let boundary = "Boundary-\(UUID().uuidString)"
-        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-
-        let bodyData = createMultipartBody(parts: parts, boundary: boundary)
-        request.httpBody = bodyData
-
-        let (data, response) = try await session.data(for: request)
-
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw APIError.invalidResponse
-        }
-
-        guard (200..<300).contains(httpResponse.statusCode) else {
-            throw APIError.statusCode(httpResponse.statusCode)
-        }
-
-        do {
-            let decoded = try JSONDecoder().decode(ResponseDTO<T>.self, from: data)
-            return decoded
-        } catch {
-            throw APIError.decoding(error)
+        switch dataResponse.result {
+        case .success(let data):
+            do {
+                let decoded = try JSONDecoder().decode(ResponseDTO<T>.self, from: data)
+                return decoded
+            } catch {
+                throw APIError.decoding(error)
+            }
+        case .failure:
+            if let statusCode = dataResponse.response?.statusCode {
+                throw APIError.statusCode(statusCode)
+            } else {
+                throw APIError.invalidResponse
+            }
         }
     }
-    
-    private func createMultipartBody(
-        parts: [MultipartPart],
-        boundary: String
-    ) -> Data {
-        var body = Data()
 
-        for part in parts {
-            body.append("--\(boundary)\r\n".data(using: .utf8)!)
-
-            if let filename = part.filename, let mimeType = part.mimeType {
-                body.append("Content-Disposition: form-data; name=\"\(part.name)\"; filename=\"\(filename)\"\r\n".data(using: .utf8)!)
-                body.append("Content-Type: \(mimeType)\r\n\r\n".data(using: .utf8)!)
-            } else {
-                body.append("Content-Disposition: form-data; name=\"\(part.name)\"\r\n\r\n".data(using: .utf8)!)
-            }
-
-            body.append(part.data)
-            body.append("\r\n".data(using: .utf8)!)
+    // MARK: - Helpers
+    private static func baseURLString() throws -> String {
+        guard let baseURLString = Bundle.main.object(forInfoDictionaryKey: "BASE_URL") as? String, URL(string: baseURLString) != nil else {
+            fatalError("❌ Invalid or missing BASE_URL in Info.plist")
         }
+        return baseURLString
+    }
+}
 
-        body.append("--\(boundary)--\r\n".data(using: .utf8)!)
-        return body
+// MARK: - AnyEncodable Wrapper
+private struct AnyEncodable: Encodable {
+    private let encodeFunc: (Encoder) throws -> Void
+    init(_ value: Encodable) {
+        self.encodeFunc = value.encode
+    }
+    func encode(to encoder: Encoder) throws { try encodeFunc(encoder) }
+}
+
+// MARK: - HTTPMethod Mapping
+private extension HTTPMethod {
+    func toAF() -> Alamofire.HTTPMethod {
+        switch self {
+        case .get: return .get
+        case .post: return .post
+        case .put: return .put
+        case .delete: return .delete
+        case .patch: return .patch
+        }
+    }
+}
+
+// MARK: - String + PathComponent Helper
+private extension String {
+    func appendingPathComponentSafe(_ path: String) throws -> URL {
+        guard let base = URL(string: self) else { throw APIError.invalidURL }
+        return base.appendingPathComponent(path)
     }
 }
