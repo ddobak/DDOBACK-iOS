@@ -20,7 +20,7 @@ struct RootView: View {
             homeView
             
         case false:
-            UserAuthView()
+            LoginView()
         }
     }
 }

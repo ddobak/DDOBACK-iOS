@@ -1,5 +1,5 @@
 //
-//  UserAuthView.swift
+//  LoginView.swift
 //  DDOBAK
 //
 //  Created by 이건우 on 9/18/25.
@@ -8,7 +8,7 @@
 import SwiftUI
 import AuthenticationServices
 
-struct UserAuthView: View {
+struct LoginView: View {
     var body: some View {
         VStack {
             SignInWithAppleButton(
@@ -61,5 +61,5 @@ struct UserAuthView: View {
 }
 
 #Preview {
-    UserAuthView()
+    LoginView()
 }
