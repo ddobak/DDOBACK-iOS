@@ -12,93 +12,93 @@ struct LoginView: View {
     
     @Environment(NavigationModel.self) private var navigationModel
     
-    @State private var showAlert = false
-    @State private var alertTitle = ""
-    @State private var alertMessage = ""
-
+    @State private var viewModel: LoginViewModel = .init()
+    
     var body: some View {
-        VStack {
+        let contents = viewModel.onboardingContent
+        
+        VStack(spacing: .zero) {
+            
+            /// 상단 온보딩 탭뷰
+            TabView(selection: $viewModel.currentOnboardingImageIndex) {
+                ForEach(contents.indices, id: \.self) { index in
+                    Image(contents[index].imageName)
+                        .resizable()
+                        .scaledToFill()
+                        .tag(index)
+                }
+            }
+            .tabViewStyle(.page(indexDisplayMode: .never))
+            .ignoresSafeArea()
+            
+            /// 설명 글
+            Text(contents[viewModel.currentOnboardingImageIndex].description)
+                .multilineTextAlignment(.center)
+                .padding(.top, 30)
+                .padding(.bottom, 25)
+            
+            /// 페이지 인디케이터
+            TabViewPageIndicator(
+                contentCount: contents.count,
+                selectedIndex: viewModel.currentOnboardingImageIndex
+            )
+            .frame(height: 8)
+            
+            Spacer()
+                .frame(height: 70)
+            
+            /// 애플 로그인 버튼
             SignInWithAppleButton(
                 .signIn,
-                onRequest: configureAppleRequest(_:),
-                onCompletion: handleAppleCompletion(result:)
+                onRequest: viewModel.configureAppleRequest,
+                onCompletion: viewModel.handleAppleCompletion
             )
             .signInWithAppleButtonStyle(.black)
             .frame(height: 52)
             .clipShape(RoundedRectangle(cornerRadius: 12))
+            .padding(.horizontal, 20)
+            .padding(.bottom, 38)
         }
-        .padding()
-        .alert(alertTitle, isPresented: $showAlert) {
+        .background(.mainWhite)
+        .animation(.easeInOut, value: viewModel.currentOnboardingImageIndex)
+        .alert(viewModel.alertTitle, isPresented: $viewModel.showAlert) {
             Button("확인", role: .cancel) { }
         } message: {
-            Text(alertMessage)
+            Text(viewModel.alertMessage)
         }
-    }
-
-    // MARK: - Apple Sign In
-
-    private func configureAppleRequest(_ request: ASAuthorizationAppleIDRequest) {
-        request.requestedScopes = [.fullName, .email]
-
-        // request.nonce = ...
-        // request.state = ...
-    }
-
-    private func handleAppleCompletion(result: Result<ASAuthorization, Error>) {
-        switch result {
-        case .success(let authorization):
-            if let credential = authorization.credential as? ASAuthorizationAppleIDCredential {
-                
-                let _ = credential.user
-                let _ = credential.fullName
-                let _ = credential.email
-
-                // Identity token(JWT)
-                guard let token = credential.identityToken.flatMap({ String(data: $0, encoding: .utf8) }) else {
-                    showErrorAlert(alertMessage: "인증 토큰을 가져오지 못했습니다.\n 잠시 후 다시 시도해주세요.")
-                    return
-                }
-
-                // Apple Sign In 요청
-                DDOBakLogger.log("Apple Sign In Success", level: .info, category: .network)
-                Task {
-                    await requestAppleSignIn(identityToken: token)
-                }
-            }
-            
-        case .failure(let error):
-            DDOBakLogger.log("Apple Sign In Failed: \(error)", level: .error, category: .network)
-        }
-    }
-    
-    private func requestAppleSignIn(identityToken: String) async {
-        do {
-            let identityToken = ["identityToken": identityToken]
-            let appleLoginResponse: ResponseDTO<AppleLoginResponse> = try await APIClient.shared.request(
-                path: "/auth/apple/login",
-                method: .post,
-                body: identityToken
-            )
-            
-            if let data = appleLoginResponse.data {
-                let isRequestSuccess: Bool = appleLoginResponse.success
-                let isNewUser: Bool = data.newUser
-                
-                // TODO: - 기본 정보 입력 로직
-            }
-            
-        } catch {
-            showErrorAlert(alertMessage: error.localizedDescription)
-        }
-    }
-    
-    private func showErrorAlert(alertMessage: String) {
-        self.alertTitle = "로그인 실패"
-        self.alertMessage = alertMessage
-        self.showAlert = true
     }
 }
 
+fileprivate struct TabViewPageIndicator: View {
+    
+    private var contentCount: Int
+    private var selectedIndex: Int
+    
+    fileprivate init(
+        contentCount: Int,
+        selectedIndex: Int
+    ) {
+        self.contentCount = contentCount
+        self.selectedIndex = selectedIndex
+    }
+    
+    fileprivate var body: some View {
+        HStack(spacing: 8) {
+            ForEach(0..<contentCount, id: \.self) { index in
+                Capsule()
+                    .fill(selectedIndex == index ? Color.mainBlue : Color.gray3)
+                    .frame(
+                        width: selectedIndex == index ? 20 : 8,
+                        height: 8
+                    )
+            }
+        }
+        .frame(maxHeight: .infinity, alignment: .top)
+    }
+}
+
+
 #Preview {
     LoginView()
+        .environment(NavigationModel())
 }

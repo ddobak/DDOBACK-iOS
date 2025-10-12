@@ -5,7 +5,7 @@
 //  Created by 이건우 on 6/21/25.
 //
 
-import SwiftUI
+import Observation
 
 @Observable
 final class NavigationModel {
