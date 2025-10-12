@@ -11,6 +11,7 @@ import Alamofire
 @Observable
 final class UserInfoSetupViewViewModel {
     var userName: String = ""
+    var isLoading: Bool = false
 
     var isValid: Bool {
         /// 길이 체크 (2~8자)
@@ -31,6 +32,9 @@ final class UserInfoSetupViewViewModel {
     
     func createUser() async {
         do {
+            isLoading = true
+            defer { isLoading = false }
+            
             let createUserResponse: ResponseDTO<Empty> = try await APIClient.shared.request(
                 path: "/user/profile",
                 method: .post,

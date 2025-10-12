@@ -11,6 +11,8 @@ import AuthenticationServices
 @Observable
 final class LoginViewModel {
     
+    private let authTokenStore: AuthTokenStore = KeyChainTokenStore.init()
+    
     @ObservationIgnored let onboardingContent: [OnboardingContent] = OnboardingContent.generate()
     var currentOnboardingImageIndex: Int = .zero
     
@@ -66,6 +68,10 @@ final class LoginViewModel {
             )
             
             if let data = appleLoginResponse.data {
+                /// `accessToken`, `refreshToken` 저장
+                authTokenStore.accessToken = data.accessToken
+                authTokenStore.refreshToken = data.refreshToken
+                
                 self.isNewUser = data.newUser
                 self.loginSuccess = appleLoginResponse.success
             }

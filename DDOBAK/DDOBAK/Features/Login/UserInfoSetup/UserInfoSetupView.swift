@@ -33,17 +33,19 @@ struct UserInfoSetupView: View {
             Spacer()
         }
         .background(.mainWhite)
+        .loadingOverlay(isLoading: $viewModel.isLoading)
         .safeAreaInset(edge: .bottom) {
             DdobakButton(
                 viewData: .init(
                     title: "다음",
                     buttonType: .primary,
-                    isEnabled: viewModel.isValid,
+                    isEnabled: viewModel.isValid && viewModel.isLoading == false,
                     isLoading: false
                 )
             )
             .onButtonTap {
                 Task {
+                    endEditing()
                     await viewModel.createUser()
                 }
             }
