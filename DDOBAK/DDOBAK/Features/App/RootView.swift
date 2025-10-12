@@ -12,9 +12,16 @@ struct RootView: View {
     @State private var navigationModel: NavigationModel = .init()
     @State private var contractAnalysisFlowModel: ContractAnalysisFlowModel = .init()
     
+    private let loginStateStorage: LoginStateStoreable = LoginStateStore()
+    
     var body: some View {
-        // homeView
-        UserAuthView()
+        switch loginStateStorage.isLoggedIn() {
+        case true:
+            homeView
+            
+        case false:
+            UserAuthView()
+        }
     }
 }
 

@@ -19,6 +19,10 @@ final class NavigationModel {
 
 extension NavigationModel {
     
+    func replaceRoot(with destination: NavigationDestination) {
+        path = [destination]
+    }
+    
     func pop() {
         guard !path.isEmpty else { return }
         path.removeLast()
@@ -28,10 +32,12 @@ extension NavigationModel {
         path.removeLast(path.count)
     }
     
+    /// 단일 뷰 push
     func push(_ destination: NavigationDestination) {
         path.append(destination)
     }
     
+    /// 여러 뷰 push
     func push(contentsOf destinations: [NavigationDestination]) {
         path.append(contentsOf: destinations)
     }
