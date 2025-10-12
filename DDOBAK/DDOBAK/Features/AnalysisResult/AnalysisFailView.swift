@@ -8,6 +8,12 @@
 import SwiftUI
 
 struct AnalysisFailView: View {
+    
+    private let analysisFailImageName: String = "analysisFail"
+    private let failText: String = "흠...\n이건 조금 어려운 문서네요!"
+    private let failSubText: String = "또박이가 분석에 실패했어요...\n계약서가 아닌 사진을 업로드하지는 않았는지 확인해주세요!"
+    private let buttonText: String = "다시 분석하기"
+    
     var body: some View {
         VStack {
             TopNavigationBar(
@@ -25,13 +31,24 @@ struct AnalysisFailView: View {
             
             Spacer()
             
-            // image
+            Image(analysisFailImageName)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .padding(.horizontal, 20)
+            
+            DdobakPageTitle(
+                viewData: .init(
+                    title: failText,
+                    subtitleType: .normal(failSubText),
+                    alignment: .center
+                )
+            )
             
             Spacer()
             
             DdobakButton(
                 viewData: .init(
-                    title: "사진 다시 올리기",
+                    title: buttonText,
                     buttonType: .primary,
                     isEnabled: true,
                     isLoading: false
