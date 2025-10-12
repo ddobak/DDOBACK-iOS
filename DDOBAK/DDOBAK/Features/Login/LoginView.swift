@@ -13,6 +13,7 @@ struct LoginView: View {
     @Environment(NavigationModel.self) private var navigationModel
     
     @State private var showAlert = false
+    @State private var alertTitle = ""
     @State private var alertMessage = ""
 
     var body: some View {
@@ -27,7 +28,7 @@ struct LoginView: View {
             .clipShape(RoundedRectangle(cornerRadius: 12))
         }
         .padding()
-        .alert("애플 로그인 오류", isPresented: $showAlert) {
+        .alert(alertTitle, isPresented: $showAlert) {
             Button("확인", role: .cancel) { }
         } message: {
             Text(alertMessage)
@@ -54,8 +55,7 @@ struct LoginView: View {
 
                 // Identity token(JWT)
                 guard let token = credential.identityToken.flatMap({ String(data: $0, encoding: .utf8) }) else {
-                    alertMessage = "인증 토큰을 가져오지 못했습니다. 잠시 후 다시 시도해주세요."
-                    showAlert = true
+                    showErrorAlert(alertMessage: "인증 토큰을 가져오지 못했습니다.\n 잠시 후 다시 시도해주세요.")
                     return
                 }
 
@@ -75,7 +75,7 @@ struct LoginView: View {
         do {
             let identityToken = ["identityToken": identityToken]
             let appleLoginResponse: ResponseDTO<AppleLoginResponse> = try await APIClient.shared.request(
-                path: "/api/auth/apple/login",
+                path: "/auth/apple/login",
                 method: .post,
                 body: identityToken
             )
@@ -83,11 +83,19 @@ struct LoginView: View {
             if let data = appleLoginResponse.data {
                 let isRequestSuccess: Bool = appleLoginResponse.success
                 let isNewUser: Bool = data.newUser
+                
+                // TODO: - 기본 정보 입력 로직
             }
             
         } catch {
-            print(error.localizedDescription)
+            showErrorAlert(alertMessage: error.localizedDescription)
         }
+    }
+    
+    private func showErrorAlert(alertMessage: String) {
+        self.alertTitle = "로그인 실패"
+        self.alertMessage = alertMessage
+        self.showAlert = true
     }
 }
 
