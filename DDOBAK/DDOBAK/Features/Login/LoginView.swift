@@ -9,6 +9,12 @@ import SwiftUI
 import AuthenticationServices
 
 struct LoginView: View {
+    
+    @Environment(NavigationModel.self) private var navigationModel
+    
+    @State private var showAlert = false
+    @State private var alertMessage = ""
+
     var body: some View {
         VStack {
             SignInWithAppleButton(
@@ -21,6 +27,11 @@ struct LoginView: View {
             .clipShape(RoundedRectangle(cornerRadius: 12))
         }
         .padding()
+        .alert("애플 로그인 오류", isPresented: $showAlert) {
+            Button("확인", role: .cancel) { }
+        } message: {
+            Text(alertMessage)
+        }
     }
 
     // MARK: - Apple Sign In
@@ -36,26 +47,46 @@ struct LoginView: View {
         switch result {
         case .success(let authorization):
             if let credential = authorization.credential as? ASAuthorizationAppleIDCredential {
-                // 고유 사용자 식별자
-                let userID = credential.user
-
-                // 최초 동의 시에만 제공
-                let fullName = credential.fullName
-                let email = credential.email
+                
+                let _ = credential.user
+                let _ = credential.fullName
+                let _ = credential.email
 
                 // Identity token(JWT)
-                let identityToken = credential.identityToken.flatMap { String(data: $0, encoding: .utf8) }
+                guard let token = credential.identityToken.flatMap({ String(data: $0, encoding: .utf8) }) else {
+                    alertMessage = "인증 토큰을 가져오지 못했습니다. 잠시 후 다시 시도해주세요."
+                    showAlert = true
+                    return
+                }
 
-                // TODO: 서버 로직
-                print("[Apple SignIn Success]")
-                print("userID:", userID)
-                print("identityToken:", identityToken ?? "unknown")
-                print("fullName:", fullName?.formatted() ?? "unknown")
-                print("email:", email ?? "unknown")
+                // Apple Sign In 요청
+                DDOBakLogger.log("Apple Sign In Success", level: .info, category: .network)
+                Task {
+                    await requestAppleSignIn(identityToken: token)
+                }
             }
             
         case .failure(let error):
-            print("[Apple SignIn Failed]:", error.localizedDescription)
+            DDOBakLogger.log("Apple Sign In Failed: \(error)", level: .error, category: .network)
+        }
+    }
+    
+    private func requestAppleSignIn(identityToken: String) async {
+        do {
+            let identityToken = ["identityToken": identityToken]
+            let appleLoginResponse: ResponseDTO<AppleLoginResponse> = try await APIClient.shared.request(
+                path: "/api/auth/apple/login",
+                method: .post,
+                body: identityToken
+            )
+            
+            if let data = appleLoginResponse.data {
+                let isRequestSuccess: Bool = appleLoginResponse.success
+                let isNewUser: Bool = data.newUser
+            }
+            
+        } catch {
+            print(error.localizedDescription)
         }
     }
 }
