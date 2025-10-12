@@ -15,7 +15,7 @@ final class APIClient: APIClientInterface {
     static let shared = APIClient()
 
     private let session: Session
-    private let tokenStore: TokenStore
+    private let tokenStore: AuthTokenStore
 
     private let baseURL: URL
 
@@ -43,7 +43,7 @@ final class APIClient: APIClientInterface {
         self.decoder = dec
 
         /// `TokenStore` 설정
-        let tokenStore = DefaultTokenStore()
+        let tokenStore = KeyChainTokenStore()
         self.tokenStore = tokenStore
 
         /// `Interceptor(RefreshToken)` 설정

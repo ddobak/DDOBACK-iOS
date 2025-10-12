@@ -8,7 +8,7 @@
 import Foundation
 import Security
 
-protocol AuthTokenStore {
+protocol AuthTokenStore: AnyObject {
     var accessToken: String? { get set }
     var refreshToken: String? { get set }
     func clear()
@@ -16,7 +16,7 @@ protocol AuthTokenStore {
 
 final class KeyChainTokenStore: AuthTokenStore {
     private let accessKey = KeyChainKey.accessToken.rawValue
-    private let refreshKey = KeyChainKey.accessToken.rawValue
+    private let refreshKey = KeyChainKey.refreshToken.rawValue
 
     var accessToken: String? {
         get { read(for: accessKey) }

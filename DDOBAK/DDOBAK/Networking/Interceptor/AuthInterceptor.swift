@@ -10,7 +10,7 @@ import Alamofire
 
 // MARK: - AuthInterceptor
 final class AuthInterceptor: RequestInterceptor {
-    private let tokenStore: TokenStore
+    private let tokenStore: AuthTokenStore
     private let lock = NSLock()
     private var isRefreshing = false
     private var requestsToRetry: [(RetryResult) -> Void] = []
@@ -18,7 +18,7 @@ final class AuthInterceptor: RequestInterceptor {
     // You can customize refresh path via init.
     private let refreshPath: String
 
-    init(tokenStore: TokenStore, refreshPath: String = "/auth/refresh") {
+    init(tokenStore: AuthTokenStore, refreshPath: String = "/auth/refresh") {
         self.tokenStore = tokenStore
         self.refreshPath = refreshPath
     }
@@ -26,7 +26,7 @@ final class AuthInterceptor: RequestInterceptor {
     // Inject Authorization header
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         var request = urlRequest
-        if request.value(forHTTPHeaderField: "Authorization") == nil, let token = tokenStore.accessToken() {
+        if request.value(forHTTPHeaderField: "Authorization") == nil, let token = tokenStore.accessToken {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
         completion(.success(request))
@@ -46,10 +46,15 @@ final class AuthInterceptor: RequestInterceptor {
         isRefreshing = true
 
         refreshTokens(using: session) { [weak self] succeeded in
-            guard let self = self else { return }
+            guard let self else { return }
+            
             self.lock.lock(); defer { self.lock.unlock() }
             self.isRefreshing = false
-            let results: [RetryResult] = succeeded ? Array(repeating: .retry, count: self.requestsToRetry.count) : Array(repeating: .doNotRetry, count: self.requestsToRetry.count)
+            
+            let results: [RetryResult] = succeeded
+            ? Array(repeating: .retry, count: self.requestsToRetry.count)
+            : Array(repeating: .doNotRetry, count: self.requestsToRetry.count)
+            
             self.requestsToRetry.forEach { $0(results.first ?? .doNotRetry) }
             self.requestsToRetry.removeAll()
         }
@@ -60,7 +65,7 @@ final class AuthInterceptor: RequestInterceptor {
             completion(false)
             return
         }
-        guard let refreshToken = tokenStore.refreshToken() else {
+        guard let refreshToken = tokenStore.refreshToken else {
             completion(false)
             return
         }
@@ -75,12 +80,16 @@ final class AuthInterceptor: RequestInterceptor {
         session.request(urlRequest)
             .validate(statusCode: 200..<300)
             .responseDecodable(of: RefreshResponse.self) { [weak self] response in
+                guard let self else { return }
+                
                 switch response.result {
                 case .success(let model):
-                    self?.tokenStore.updateTokens(accessToken: model.accessToken, refreshToken: model.refreshToken)
+                    self.tokenStore.accessToken = model.accessToken
+                    if let newRefresh = model.refreshToken { self.tokenStore.refreshToken = newRefresh }
                     completion(true)
+                    
                 case .failure:
-                    self?.tokenStore.clear()
+                    self.tokenStore.clear()
                     completion(false)
                 }
             }
