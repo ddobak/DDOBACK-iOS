@@ -26,6 +26,8 @@ protocol LoginStateStoreable: AnyObject {
 /// Simple UserDefaults-backed login state store.
 /// In production, consider persisting sensitive identifiers securely (e.g., Keychain).
 final class LoginStateStore: LoginStateStoreable {
+    static let shared = LoginStateStore()
+    
     private let isLoggedInKey: String
     private let userIdentifierKey: String
     private let userDefaults: UserDefaults

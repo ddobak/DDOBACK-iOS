@@ -45,6 +45,7 @@ extension NavigationModel {
 
 extension NavigationModel {
     enum NavigationDestination: Hashable {
+        case userInfoSetup
         case selectContractType
         case privacyAgreement
         case selectContractUploadMethod

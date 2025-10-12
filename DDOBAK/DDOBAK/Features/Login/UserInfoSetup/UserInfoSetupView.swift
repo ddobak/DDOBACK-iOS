@@ -42,6 +42,11 @@ struct UserInfoSetupView: View {
                     isLoading: false
                 )
             )
+            .onButtonTap {
+                Task {
+                    await viewModel.createUser()
+                }
+            }
             .padding(.bottom, 20)
         }
     }

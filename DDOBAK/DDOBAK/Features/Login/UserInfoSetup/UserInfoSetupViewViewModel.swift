@@ -6,12 +6,12 @@
 //
 
 import Observation
+import Alamofire
 
 @Observable
 final class UserInfoSetupViewViewModel {
     var userName: String = ""
 
-    // 한글만, 8자 이내, 공백 없이
     var isValid: Bool {
         /// 길이 체크 (2~8자)
         let count = userName.count
@@ -27,5 +27,20 @@ final class UserInfoSetupViewViewModel {
             }
         }
         return true
+    }
+    
+    func createUser() async {
+        do {
+            let createUserResponse: ResponseDTO<Empty> = try await APIClient.shared.request(
+                path: "/user/profile",
+                method: .post,
+                body: ["name": userName]
+            )
+            if createUserResponse.success == true {
+                LoginStateStore.shared.update(isLoggedIn: true, userIdentifier: nil)
+            }
+        } catch {
+            
+        }
     }
 }

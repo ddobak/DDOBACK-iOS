@@ -66,6 +66,15 @@ struct LoginView: View {
         } message: {
             Text(viewModel.alertMessage)
         }
+        .onChange(of: viewModel.loginSuccess) { _, newValue in
+            if viewModel.isNewUser == true {
+                /// 신규 유저일 경우, 닉네임 입력 및 유저 생성 수행
+                navigationModel.push(.userInfoSetup)
+            } else {
+                /// Login State 변경으로 Home으로 화면 전환됨.
+                LoginStateStore.shared.update(isLoggedIn: true, userIdentifier: nil)
+            }
+        }
     }
 }
 

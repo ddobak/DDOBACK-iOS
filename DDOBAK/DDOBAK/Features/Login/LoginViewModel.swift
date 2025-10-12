@@ -18,6 +18,10 @@ final class LoginViewModel {
     @ObservationIgnored var alertMessage = ""
     var showAlert = false
     
+    /// success flags
+    var isNewUser: Bool = false
+    var loginSuccess: Bool = false
+    
     func configureAppleRequest(_ request: ASAuthorizationAppleIDRequest) {
         request.requestedScopes = [.fullName, .email]
 
@@ -62,10 +66,8 @@ final class LoginViewModel {
             )
             
             if let data = appleLoginResponse.data {
-                let isRequestSuccess: Bool = appleLoginResponse.success
-                let isNewUser: Bool = data.newUser
-                
-                // TODO: - 기본 정보 입력 로직
+                self.isNewUser = data.newUser
+                self.loginSuccess = appleLoginResponse.success
             }
             
         } catch {
