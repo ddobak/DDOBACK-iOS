@@ -82,6 +82,11 @@ struct MaskingView: View {
                 navigationModel.push(.checkOcrResult(contractId: ocrContractId))
             }
         }
+        .onChange(of: viewModel.currentImageIndex) { _, _ in
+            /// 선택된 이미지 변경 시 `scale` 및 `offset` 초기화
+            scale = 1
+            offset = .zero
+        }
     }
 }
 
