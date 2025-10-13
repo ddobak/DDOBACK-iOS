@@ -12,16 +12,11 @@ struct MyPageView: View {
     @Environment(NavigationModel.self) private var navigationModel
     @State private var viewModel: MyPageViewModel = .init()
     
-    private let keyChainStore = KeyChainTokenStore()
-    private let loginStateStore = LoginStateStore()
-    
-    @MainActor
-    private func logout() {
-        withAnimation {
-            keyChainStore.clear()
-            loginStateStore.clear()
-        }
-    }
+    /// 로그아웃, 탈퇴 관련 Alert 프로퍼티
+    @State private var alertTitle: String = ""
+    @State private var alertMessage: String = ""
+    @State private var showAlert: Bool = false
+    @State private var alertConfirmAction: (() -> Void)? = nil
     
     var body: some View {
         VStack(spacing: .zero) {
@@ -60,6 +55,17 @@ struct MyPageView: View {
             Spacer()
             
             Button {
+                alertTitle = "⚠️ 정말 또박이를 떠나시겠어요?"
+                alertMessage = "탈퇴 시 모든 분석 기록이 삭제돼요."
+                alertConfirmAction = {
+                    Task {
+                        await viewModel.resign()
+                        await MainActor.run {
+                            navigationModel.popToRoot()
+                        }
+                    }
+                }
+                showAlert = true
                 
             } label: {
                 Text("탈퇴하기")
@@ -75,6 +81,15 @@ struct MyPageView: View {
             await viewModel.checkUpdateIsAvailable()
         }
         .loadingOverlay(isLoading: $viewModel.isLoading)
+        .alert(alertTitle, isPresented: $showAlert) {
+            Button("취소", role: .cancel) {}
+            Button("확인", role: .destructive) {
+                alertConfirmAction?()
+                alertConfirmAction = nil
+            }
+        } message: {
+            Text(alertMessage)
+        }
     }
 }
 
@@ -145,13 +160,18 @@ private extension MyPageView {
         VStack(spacing: 16) {
             DdobakSectionItem(
                 viewData: .init(
-                    leadingItemText: "로그이웃",
+                    leadingItemText: "로그아웃",
                     trailingItem: .icon(type: .arrow)
                 )
             )
             .onSectionItemTap {
-                logout()
-                navigationModel.popToRoot()
+                alertTitle = "🐦 또박이에서 로그아웃할까요?"
+                alertMessage = "다시 로그인하면 분석 기록을 이어볼 수 있어요."
+                alertConfirmAction = {
+                    viewModel.logout()
+                    navigationModel.popToRoot()
+                }
+                showAlert = true
             }
             
             DdobakSectionItem(
@@ -194,3 +214,4 @@ private extension MyPageView {
     MyPageView()
         .environment(NavigationModel())
 }
+

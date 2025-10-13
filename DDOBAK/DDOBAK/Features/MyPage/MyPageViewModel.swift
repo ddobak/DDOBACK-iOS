@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Alamofire
 
 @Observable
 final class MyPageViewModel {
@@ -27,6 +28,34 @@ final class MyPageViewModel {
         return version ?? "—"
     }
     
+    @ObservationIgnored
+    private let keyChainStore = KeyChainTokenStore()
+    @ObservationIgnored
+    private let loginStateStore = LoginStateStore()
+    
+    /// 로그아웃
+    func logout() {
+        withAnimation {
+            keyChainStore.clear()
+            loginStateStore.clear()
+        }
+    }
+    
+    /// 회원탈퇴
+    func resign() async {
+        isLoading = true
+        defer { isLoading = false }
+        
+        do {
+            let _: ResponseDTO<Empty> = try await APIClient.shared.request(
+                path: "/user/withdraw",
+                method: .delete
+            )
+        } catch {
+            
+        }
+    }
+    
     /// 유저 정보 fetch
     func fetchUserInfo() async {
         isLoading = true
@@ -43,10 +72,6 @@ final class MyPageViewModel {
         } catch {
             
         }
-    }
-    
-    func resign() {
-        
     }
     
     /// 설치된 앱 버전이 앱스토어 배포된 앱 버전보다 낮은지 확인
@@ -99,3 +124,4 @@ final class MyPageViewModel {
         return .orderedSame
     }
 }
+

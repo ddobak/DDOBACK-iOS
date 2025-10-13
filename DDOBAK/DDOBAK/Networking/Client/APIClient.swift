@@ -49,8 +49,8 @@ final class APIClient: APIClientInterface {
         /// `Interceptor(RefreshToken)` 설정
         let interceptor = AuthInterceptor(tokenStore: tokenStore)
         let configuration = URLSessionConfiguration.af.default
-        configuration.timeoutIntervalForRequest = 60
-        configuration.timeoutIntervalForResource = 60
+        configuration.timeoutIntervalForRequest = 15
+        configuration.timeoutIntervalForResource = 15
 
         #if DEBUG
         /// `NetworkLogger` 설정 (DEBUG ONLY)
