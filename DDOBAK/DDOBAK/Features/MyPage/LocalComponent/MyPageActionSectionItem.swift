@@ -66,7 +66,3 @@ extension MyPageActionSectionItem {
         return newSelf
     }
 }
-
-#Preview {
-    MyPageActionSectionItem(title: "가나", content: "가가가가ㅏ가가ㅏ가가가ㅏ가가ㅏㄱrkrk", actionButtonTitle: "수정")
-}

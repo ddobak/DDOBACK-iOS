@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct MyPageView: View {
+    
+    @Environment(NavigationModel.self) private var navigationModel
     @State private var viewModel: MyPageViewModel = .init()
     
     var body: some View {
@@ -23,6 +25,9 @@ struct MyPageView: View {
                 )
             )
             .setAppearance(.light)
+            .onLeadingItemTap {
+                navigationModel.pop()
+            }
             
             /// 기본 사진 및 이름
             profileView
