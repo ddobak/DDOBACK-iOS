@@ -1,5 +1,5 @@
 //
-//  KeyChainStorage.swift
+//  KeyChainStore.swift
 //  DDOBAK
 //
 //  Created by 이건우 on 10/1/25.
@@ -8,15 +8,15 @@
 import Foundation
 import Security
 
-protocol AuthTokenStore: AnyObject {
+protocol AuthTokenStoreable: AnyObject {
     var accessToken: String? { get set }
     var refreshToken: String? { get set }
     func clear()
 }
 
-final class KeyChainTokenStore: AuthTokenStore {
-    private let accessKey = KeyChainKey.accessToken.rawValue
-    private let refreshKey = KeyChainKey.refreshToken.rawValue
+final class KeyChainTokenStore: AuthTokenStoreable {
+    private let accessKey = LocalStoreKey.accessToken.rawValue
+    private let refreshKey = LocalStoreKey.refreshToken.rawValue
 
     var accessToken: String? {
         get { read(for: accessKey) }

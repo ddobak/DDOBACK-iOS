@@ -11,7 +11,7 @@ import AuthenticationServices
 @Observable
 final class LoginViewModel {
     
-    private let authTokenStore: AuthTokenStore = KeyChainTokenStore.init()
+    private let authTokenStore: AuthTokenStoreable = KeyChainTokenStore.init()
     
     @ObservationIgnored let onboardingContent: [OnboardingContent] = OnboardingContent.generate()
     var currentOnboardingImageIndex: Int = .zero

@@ -15,7 +15,7 @@ final class APIClient: APIClientInterface {
     static let shared = APIClient()
 
     private let session: Session
-    private let tokenStore: AuthTokenStore
+    private let tokenStore: AuthTokenStoreable
 
     private let baseURL: URL
 

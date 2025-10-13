@@ -10,7 +10,7 @@ import Alamofire
 
 // MARK: - AuthInterceptor
 final class AuthInterceptor: RequestInterceptor {
-    private let tokenStore: AuthTokenStore
+    private let tokenStore: AuthTokenStoreable
     private let lock = NSLock()
     private var isRefreshing = false
     private var requestsToRetry: [(RetryResult) -> Void] = []
@@ -18,7 +18,7 @@ final class AuthInterceptor: RequestInterceptor {
     // You can customize refresh path via init.
     private let refreshPath: String
 
-    init(tokenStore: AuthTokenStore, refreshPath: String = "/auth/refresh") {
+    init(tokenStore: AuthTokenStoreable, refreshPath: String = "/auth/refresh") {
         self.tokenStore = tokenStore
         self.refreshPath = refreshPath
     }

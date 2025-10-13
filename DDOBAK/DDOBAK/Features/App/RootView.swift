@@ -12,7 +12,7 @@ struct RootView: View {
     @State private var navigationModel: NavigationModel = .init()
     @State private var contractAnalysisFlowModel: ContractAnalysisFlowModel = .init()
     
-    @AppStorage("isLoggedIn") var isLoggedIn: Bool = false
+    @AppStorage(LocalStoreKey.isLoggedIn.rawValue) var isLoggedIn: Bool = false
     
     var body: some View {
         rootView
