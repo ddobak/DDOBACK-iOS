@@ -25,7 +25,7 @@ final class LoginViewModel {
     var loginSuccess: Bool = false
     
     func configureAppleRequest(_ request: ASAuthorizationAppleIDRequest) {
-        request.requestedScopes = [.fullName, .email]
+        request.requestedScopes = [.email]
 
         // request.nonce = ...
         // request.state = ...
@@ -46,8 +46,6 @@ final class LoginViewModel {
                     return
                 }
 
-                // Apple Sign In 요청
-                DDOBakLogger.log("Apple Sign In Success", level: .info, category: .network)
                 Task {
                     await requestAppleSignIn(identityToken: token)
                 }
@@ -72,8 +70,10 @@ final class LoginViewModel {
                 authTokenStore.accessToken = data.accessToken
                 authTokenStore.refreshToken = data.refreshToken
                 
-                self.isNewUser = data.newUser
-                self.loginSuccess = appleLoginResponse.success
+                await MainActor.run {
+                    self.isNewUser = data.newUser
+                    self.loginSuccess = appleLoginResponse.success
+                }
             }
             
         } catch {
