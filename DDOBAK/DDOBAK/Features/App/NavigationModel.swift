@@ -47,7 +47,7 @@ extension NavigationModel {
     enum NavigationDestination: Hashable {
         
         /// 로그인
-        case userInfoSetup
+        case userInfoSetup(isEditing: Bool = false)
         
         /// 유저
         case myPage

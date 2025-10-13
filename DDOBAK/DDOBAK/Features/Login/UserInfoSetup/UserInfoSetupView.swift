@@ -8,13 +8,27 @@
 import SwiftUI
 
 struct UserInfoSetupView: View {
+    
+    @Environment(NavigationModel.self) private var navigationModel
     @State private var viewModel: UserInfoSetupViewViewModel = .init()
+    
+    private let isEditing: Bool
+    
+    init(isEditing: Bool) {
+        self.isEditing = isEditing
+    }
+    
+    private var pageTitle: String {
+        isEditing
+        ? "또박이가 부를\n새 이름을 입력해주세요"
+        : "또박이가 부를\n이름을 입력해주세요"
+    }
     
     var body: some View {
         VStack(spacing: .zero) {
             DdobakPageTitle(
                 viewData: .init(
-                    title: "또박이가 부를\n이름을 입력해주세요",
+                    title: pageTitle,
                     subtitleType: .secondary("한글로 2자 이상 8자 이하로 작성해주세요."),
                     alignment: .leading
                 )
@@ -46,7 +60,16 @@ struct UserInfoSetupView: View {
             .onButtonTap {
                 Task {
                     endEditing()
-                    await viewModel.createUser()
+                    
+                    switch isEditing {
+                    case true:
+                        /// `userInfo` 변경 성공 시 `pop` 처리
+                        let success = await viewModel.editUser()
+                        if success { navigationModel.pop() }
+                        
+                    case false:
+                        await viewModel.createUser()
+                    }
                 }
             }
             .padding(.bottom, 20)
@@ -55,5 +78,5 @@ struct UserInfoSetupView: View {
 }
 
 #Preview {
-    UserInfoSetupView()
+    UserInfoSetupView(isEditing: true)
 }

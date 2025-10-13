@@ -31,10 +31,10 @@ final class UserInfoSetupViewViewModel {
     }
     
     func createUser() async {
+        isLoading = true
+        defer { isLoading = false }
+        
         do {
-            isLoading = true
-            defer { isLoading = false }
-            
             let createUserResponse: ResponseDTO<Empty> = try await APIClient.shared.request(
                 path: "/user/profile",
                 method: .post,
@@ -47,6 +47,23 @@ final class UserInfoSetupViewViewModel {
             }
         } catch {
             
+        }
+    }
+    
+    func editUser() async -> Bool {
+        isLoading = true
+        defer { isLoading = false }
+        
+        do {
+            let editUserResponse: ResponseDTO<UserInfo> = try await APIClient.shared.request(
+                path: "/user/profile",
+                method: .put,
+                body: ["name": userName]
+            )
+            return editUserResponse.success
+            
+        } catch {
+            return false
         }
     }
 }

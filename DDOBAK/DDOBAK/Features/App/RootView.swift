@@ -43,8 +43,8 @@ private extension RootView {
             .navigationDestination(for: NavigationModel.NavigationDestination.self) { destination in
                 Group {
                     switch destination {
-                    case .userInfoSetup:
-                        UserInfoSetupView()
+                    case .userInfoSetup(let isEditing):
+                        UserInfoSetupView(isEditing: isEditing)
                         
                     case .myPage:
                         MyPageView()

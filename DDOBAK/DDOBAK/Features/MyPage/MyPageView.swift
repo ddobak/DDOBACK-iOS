@@ -104,7 +104,7 @@ private extension MyPageView {
                     actionButtonTitle: "수정"
                 )
                 .onButtonTap {
-                    // TODO: - 이름 수정
+                    navigationModel.push(.userInfoSetup(isEditing: true))
                 }
                 .padding(.top, 20)
             } else {
@@ -121,7 +121,7 @@ private extension MyPageView {
     
     @ViewBuilder
     private var etcSection: some View {
-        VStack(spacing: 14) {
+        VStack(spacing: 16) {
             DdobakSectionItem(
                 viewData: .init(
                     leadingItemText: "공지사항",
