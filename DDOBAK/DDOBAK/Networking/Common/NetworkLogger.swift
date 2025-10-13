@@ -29,6 +29,7 @@ final class NetworkLogger: EventMonitor {
         
         if let error = response.error {
             print("🚨 [RES Error]: \(error.localizedDescription)")
+            print(response.data?.prettyJson ?? "<no response data>")
         }
         
         print("===================================================================================\n")

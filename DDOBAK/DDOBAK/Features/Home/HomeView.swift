@@ -61,17 +61,18 @@ struct HomeView: View {
                     Spacer()
                         .frame(height: 36)
                     
+                    /// 최근 분석 이력
                     recentAnalysesSection
                     
                     Spacer()
                         .frame(height: 36)
                     
+                    /// 가이드 살펴보기
                     howToUse
                         .padding(.horizontal, 20)
                     
                     Spacer()
                         .frame(height: 36)
-                    
                     
                     honeyTips
                     
@@ -180,6 +181,9 @@ extension HomeView {
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .buttonShadow()
+                            .onTapGesture {
+                                navigationModel.push(.analysisStatus(analysisStatus: .failed, contractData: .mock()))
+                            }
                     } else {
                         ForEach(recentAnalyses, id: \.self) { analysis in
                             ContractAnalysisInfoCardView(viewData: analysis)
