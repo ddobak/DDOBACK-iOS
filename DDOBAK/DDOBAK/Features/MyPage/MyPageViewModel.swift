@@ -12,6 +12,10 @@ final class MyPageViewModel {
     
     /// 업데이트 가능 여부
     var isUpdateAvailable: Bool = false
+    
+    /// 사용자명
+    var userName: String?
+    var isLoading: Bool = false
 
     @ObservationIgnored
     var appVersion: String {
@@ -21,6 +25,24 @@ final class MyPageViewModel {
             return "\(version)"
         }
         return version ?? "—"
+    }
+    
+    /// 유저 정보 fetch
+    func fetchUserInfo() async {
+        isLoading = true
+        defer { isLoading = false }
+        
+        do {
+            let userInfoResponse: ResponseDTO<UserInfo> = try await APIClient.shared.request(
+                path: "/user/profile",
+                method: .get
+            )
+            if let userName = userInfoResponse.data?.name {
+                self.userName = userName
+            }
+        } catch {
+            
+        }
     }
     
     /// 설치된 앱 버전이 앱스토어 배포된 앱 버전보다 낮은지 확인

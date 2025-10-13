@@ -50,8 +50,10 @@ struct MyPageView: View {
         }
         .background(.mainWhite)
         .task {
+            await viewModel.fetchUserInfo()
             await viewModel.checkUpdateIsAvailable()
         }
+        .loadingOverlay(isLoading: $viewModel.isLoading)
     }
 }
 
@@ -71,9 +73,16 @@ private extension MyPageView {
             Spacer()
                 .frame(height: 20)
             
-            Text("김또박")
-                .font(.ddobak(.title3_sb20))
-                .foregroundStyle(.mainBlack)
+            if let name = viewModel.userName {
+                Text(name)
+                    .font(.ddobak(.title3_sb20))
+                    .foregroundStyle(.mainBlack)
+            } else {
+                Text("김또박")
+                    .font(.ddobak(.title3_sb20))
+                    .foregroundStyle(.mainBlack)
+                    .redacted(reason: .placeholder)
+            }
             
             Spacer()
                 .frame(height: 36)
@@ -88,15 +97,25 @@ private extension MyPageView {
                 titleColor: .mainBlack
             )
             
-            MyPageActionSectionItem(
-                title: "이름",
-                content: "김또박",
-                actionButtonTitle: "수정"
-            )
-            .onButtonTap {
-                // ...
+            if let name = viewModel.userName {
+                MyPageActionSectionItem(
+                    title: "이름",
+                    content: name,
+                    actionButtonTitle: "수정"
+                )
+                .onButtonTap {
+                    // TODO: - 이름 수정
+                }
+                .padding(.top, 20)
+            } else {
+                MyPageActionSectionItem(
+                    title: "이름",
+                    content: "김또박",
+                    actionButtonTitle: "수정"
+                )
+                .padding(.top, 20)
+                .redacted(reason: .placeholder)
             }
-            .padding(.top, 20)
         }
     }
     
@@ -141,4 +160,5 @@ private extension MyPageView {
 
 #Preview {
     MyPageView()
+        .environment(NavigationModel())
 }

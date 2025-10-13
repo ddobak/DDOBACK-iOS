@@ -23,7 +23,7 @@ final class AuthInterceptor: RequestInterceptor {
         self.refreshPath = refreshPath
     }
 
-    // Inject Authorization header
+    /// Inject Authorization header
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         var request = urlRequest
         if request.value(forHTTPHeaderField: "Authorization") == nil, let token = tokenStore.accessToken {
@@ -32,7 +32,7 @@ final class AuthInterceptor: RequestInterceptor {
         completion(.success(request))
     }
 
-    // Retry on 401 after refreshing token
+    /// 401 - refreshing token
     func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
         guard let response = request.task?.response as? HTTPURLResponse, response.statusCode == 401 else {
             completion(.doNotRetryWithError(error))
