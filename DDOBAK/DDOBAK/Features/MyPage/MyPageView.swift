@@ -54,31 +54,45 @@ private extension MyPageView {
     
     @ViewBuilder
     private var profileView: some View {
-        Spacer()
-            .frame(height: 36)
-        
-        Image("kimddobak")
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .padding(.horizontal, 140)
-        
-        Spacer()
-            .frame(height: 20)
-        
-        Text("김또박")
-            .font(.ddobak(.title3_sb20))
-            .foregroundStyle(.mainBlack)
-        
-        Spacer()
-            .frame(height: 36)
+        VStack(spacing: .zero) {
+            Spacer()
+                .frame(height: 36)
+            
+            Image("kimddobak")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .padding(.horizontal, 140)
+            
+            Spacer()
+                .frame(height: 20)
+            
+            Text("김또박")
+                .font(.ddobak(.title3_sb20))
+                .foregroundStyle(.mainBlack)
+            
+            Spacer()
+                .frame(height: 36)
+        }
     }
     
     @ViewBuilder
     private var userInfoSection: some View {
-        DdobakSectionHeader(
-            title: "기본 정보",
-            titleColor: .mainBlack
-        )
+        VStack(spacing: .zero) {
+            DdobakSectionHeader(
+                title: "기본 정보",
+                titleColor: .mainBlack
+            )
+            
+            MyPageActionSectionItem(
+                title: "이름",
+                content: "김또박",
+                actionButtonTitle: "수정"
+            )
+            .onButtonTap {
+                // ...
+            }
+            .padding(.top, 20)
+        }
     }
     
     @ViewBuilder

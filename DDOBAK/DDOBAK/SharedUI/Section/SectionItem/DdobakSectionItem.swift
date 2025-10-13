@@ -43,6 +43,7 @@ private extension DdobakSectionItem {
     var leadingItem: some View {
         Text(viewData.leadingItemText)
             .font(.ddobak(.body1_m16))
+            .foregroundStyle(.mainBlack)
     }
     
     @ViewBuilder

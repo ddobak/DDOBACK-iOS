@@ -53,7 +53,6 @@ final class MyPageViewModel {
             struct AppInfo: Decodable { let version: String }
             let decoded = try JSONDecoder().decode(LookupResponse.self, from: data)
             let version = decoded.results.first?.version ?? "cannot fetch version from app store."
-            print(version)
             return version
         } catch {
             return ""
