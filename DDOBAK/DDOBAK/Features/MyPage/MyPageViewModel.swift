@@ -47,10 +47,18 @@ final class MyPageViewModel {
         defer { isLoading = false }
         
         do {
-            let _: ResponseDTO<Empty> = try await APIClient.shared.request(
+            let resignResponse: ResponseDTO<Empty> = try await APIClient.shared.request(
                 path: "/user/withdraw",
                 method: .delete
             )
+            if resignResponse.success == true {
+                withAnimation {
+                    keyChainStore.clear()
+                    loginStateStore.clear()
+                }
+            } else {
+                DDOBakLogger.log("Unexpected resign response", level: .error, category: .feature(featureName: "회원탈퇴"))
+            }
         } catch {
             
         }
