@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct MyPageView: View {
+    @State private var viewModel: MyPageViewModel = .init()
+    
     var body: some View {
         VStack(spacing: .zero) {
             TopNavigationBar(
@@ -22,21 +24,29 @@ struct MyPageView: View {
             )
             .setAppearance(.light)
             
+            /// 기본 사진 및 이름
             profileView
             
             Rectangle()
                 .frame(height: 8)
                 .foregroundStyle(.gray2)
             
-            DdobakSectionHeader(
-                title: "기본 정보",
-                titleColor: .mainBlack
-            )
-            .padding(.top, 30)
+            /// 기본 정보 섹션
+            userInfoSection
+                .padding(.top, 30)
+            
+            Spacer()
+                .frame(height: 50)
+            
+            /// 기타 정보 섹션
+            etcSection
 
             Spacer()
         }
         .background(.mainWhite)
+        .task {
+            await viewModel.checkUpdateIsAvailable()
+        }
     }
 }
 
@@ -61,6 +71,52 @@ private extension MyPageView {
         
         Spacer()
             .frame(height: 36)
+    }
+    
+    @ViewBuilder
+    private var userInfoSection: some View {
+        DdobakSectionHeader(
+            title: "기본 정보",
+            titleColor: .mainBlack
+        )
+    }
+    
+    @ViewBuilder
+    private var etcSection: some View {
+        VStack(spacing: 14) {
+            DdobakSectionItem(
+                viewData: .init(
+                    leadingItemText: "공지사항",
+                    trailingItem: .icon(type: .arrow)
+                )
+            )
+            
+            DdobakSectionItem(
+                viewData: .init(
+                    leadingItemText: "정책",
+                    trailingItem: .icon(type: .arrow)
+                )
+            )
+            
+            DdobakSectionItem(
+                viewData: .init(
+                    leadingItemText: "버전",
+                    trailingItem: .text(viewModel.appVersion)
+                )
+            )
+            
+            if viewModel.isUpdateAvailable {
+                Button {
+                    viewModel.openAppStore()
+                } label: {
+                    Text("사용 가능한 업데이트가 있어요")
+                        .font(.ddobak(.caption3_r12))
+                        .foregroundStyle(.mainBlue)
+                        .underline()
+                }
+                .padding(.top, 10)
+            }
+        }
     }
 }
 
