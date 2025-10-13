@@ -72,7 +72,9 @@ struct LoginView: View {
                 navigationModel.push(.userInfoSetup)
             } else {
                 /// Login State 변경으로 Home으로 화면 전환됨.
-                LoginStateStore.shared.update(isLoggedIn: true, userIdentifier: nil)
+                withAnimation {
+                    LoginStateStore.shared.update(isLoggedIn: true, userIdentifier: nil)
+                }
             }
         }
     }

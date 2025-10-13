@@ -5,7 +5,7 @@
 //  Created by 이건우 on 10/13/25.
 //
 
-import Observation
+import SwiftUI
 import Alamofire
 
 @Observable
@@ -41,7 +41,9 @@ final class UserInfoSetupViewViewModel {
                 body: ["name": userName]
             )
             if createUserResponse.success == true {
-                LoginStateStore.shared.update(isLoggedIn: true, userIdentifier: nil)
+                withAnimation {
+                    LoginStateStore.shared.update(isLoggedIn: true, userIdentifier: nil)
+                }
             }
         } catch {
             

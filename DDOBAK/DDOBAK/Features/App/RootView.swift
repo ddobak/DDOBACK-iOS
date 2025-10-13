@@ -14,6 +14,10 @@ struct RootView: View {
     
     @AppStorage(LocalStoreKey.isLoggedIn.rawValue) var isLoggedIn: Bool = false
     
+    // For Testing
+    // let KC = KeyChainTokenStore()
+    // let UD = LoginStateStore()
+    
     var body: some View {
         rootView
     }
