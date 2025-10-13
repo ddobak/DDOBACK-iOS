@@ -12,6 +12,17 @@ struct MyPageView: View {
     @Environment(NavigationModel.self) private var navigationModel
     @State private var viewModel: MyPageViewModel = .init()
     
+    private let keyChainStore = KeyChainTokenStore()
+    private let loginStateStore = LoginStateStore()
+    
+    @MainActor
+    private func logout() {
+        withAnimation {
+            keyChainStore.clear()
+            loginStateStore.clear()
+        }
+    }
+    
     var body: some View {
         VStack(spacing: .zero) {
             TopNavigationBar(
@@ -45,8 +56,18 @@ struct MyPageView: View {
             
             /// 기타 정보 섹션
             etcSection
-
+            
             Spacer()
+            
+            Button {
+                
+            } label: {
+                Text("탈퇴하기")
+                    .font(.ddobak(.caption1_m16))
+                    .foregroundStyle(.gray5)
+                    .underline()
+            }
+            .padding(.bottom, 20)
         }
         .background(.mainWhite)
         .task {
@@ -122,6 +143,17 @@ private extension MyPageView {
     @ViewBuilder
     private var etcSection: some View {
         VStack(spacing: 16) {
+            DdobakSectionItem(
+                viewData: .init(
+                    leadingItemText: "로그이웃",
+                    trailingItem: .icon(type: .arrow)
+                )
+            )
+            .onSectionItemTap {
+                logout()
+                navigationModel.popToRoot()
+            }
+            
             DdobakSectionItem(
                 viewData: .init(
                     leadingItemText: "공지사항",

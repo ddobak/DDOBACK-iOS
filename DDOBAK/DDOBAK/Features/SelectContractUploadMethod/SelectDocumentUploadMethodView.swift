@@ -65,9 +65,6 @@ struct SelectContractUploadMethodView: View {
             .padding(.top, TopNavigationBarAppearance.topNavigationBarHeight)
         }
         .background(.mainWhite)
-        .onAppear {
-            imageSelection = .init()
-        }
         .alert(alertErrorDescription ?? "이미지 처리에 문제가 발생했어요", isPresented: $showErrorAlert) {
             Button("확인", role: .cancel) { }
         }
@@ -133,6 +130,7 @@ extension SelectContractUploadMethodView {
                 )
             )
             .onButtonTap {
+                imageSelection = .init()
                 showPhotosPicker = true
             }
         }

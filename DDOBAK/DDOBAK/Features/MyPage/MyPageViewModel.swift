@@ -45,6 +45,10 @@ final class MyPageViewModel {
         }
     }
     
+    func resign() {
+        
+    }
+    
     /// 설치된 앱 버전이 앱스토어 배포된 앱 버전보다 낮은지 확인
     func checkUpdateIsAvailable() async {
         let appStoreVersion = await self.fetchAppStoreVersion()

@@ -81,6 +81,7 @@ private extension RootView {
                 .navigationBarBackButtonHidden(true)
             }
         }
+        .animation(.default, value: isLoggedIn)
         .environment(navigationModel)
         .environment(contractAnalysisFlowModel)
     }
