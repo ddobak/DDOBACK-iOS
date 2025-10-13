@@ -45,15 +45,30 @@ extension NavigationModel {
 
 extension NavigationModel {
     enum NavigationDestination: Hashable {
+        
+        /// 로그인
         case userInfoSetup
+        
+        /// 유저
+        case myPage
+        
+        /// 분석
         case selectContractType
         case privacyAgreement
         case selectContractUploadMethod
-        case archiveList
         case checkOcrResult(contractId: String)
+        
+        /// 아카이브 열람
+        case archiveList
+
+        /// 분석 결과
         case analysisStatus(analysisStatus: Contract.AnalysisStatus, contractData: Contract)
         case analysisResult(contractId: String, analysisId: String)
+        
+        /// 이용 가이드
         case howToUse
+        
+        /// 꿀팁
         case honeyTip(tipId: String)
     }
 }

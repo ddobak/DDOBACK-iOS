@@ -199,6 +199,9 @@ extension HomeView {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .buttonShadow()
+                        .contextMenu {
+                            Text(viewModel.errorMessage.unwrapped(placeholder: "Unknown error"))
+                        }
                 } else {
                     ForEach(0..<3, id: \.self) { _ in
                         ContractAnalysisInfoCardView(viewData: .mock())
