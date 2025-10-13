@@ -10,131 +10,130 @@ import Alamofire
 
 // MARK: - AuthInterceptor
 final class AuthInterceptor: RequestInterceptor {
-    
+
     private let tokenStore: AuthTokenStoreable
-    private let lock = NSLock()
-    private var isRefreshing = false
-    private var requestsToRetry: [(RetryResult) -> Void] = []
-    
-    private let authPaths: Set<String> = ["auth/apple/login", "auth/login", "auth/refresh"]
-    private func normalizedPath(from request: Request) -> String {
-        request.request?.url?.path.trimmingCharacters(in: CharacterSet(charactersIn: "/")) ?? ""
-    }
-    
+    private let excludedSuffixes: [String] = [
+        "auth/apple/login",
+        "auth/login",
+        "auth/refresh"
+    ]
+
+    private let maxRetryCount: Int
     private let refreshPath: String
+
+    /// refresh 전용 세션 (interceptor 제거 → 재귀 방지)
+    private lazy var refreshSession: Session = {
+        let configuration = URLSessionConfiguration.af.default
+        configuration.timeoutIntervalForRequest = 15
+        configuration.timeoutIntervalForResource = 15
+        return Session(configuration: configuration)
+    }()
 
     init(
         tokenStore: AuthTokenStoreable,
-        refreshPath: String = "/auth/refresh"
+        refreshPath: String = "auth/refresh",
+        maxRetryCount: Int = 1
     ) {
         self.tokenStore = tokenStore
         self.refreshPath = refreshPath
+        self.maxRetryCount = maxRetryCount
     }
 
-    /// Inject Authorization header
-    func adapt(
-        _ urlRequest: URLRequest,
-        for session: Session,
-        completion: @escaping (Result<URLRequest, Error>) -> Void
-    ) {
-        var request = urlRequest
-        
-        if let token = tokenStore.accessToken, !token.isEmpty {
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        }
-        
-        completion(.success(request))
+    // MARK: - Helpers
+    private func isExcluded(_ url: URL?) -> Bool {
+        let path = (url?.path ?? "").trimmingCharacters(in: CharacterSet(charactersIn: "/")).lowercased()
+        return excludedSuffixes.contains { path.hasSuffix($0.lowercased()) }
     }
 
-    /// 401 - refreshing token
-    func retry(
-        _ request: Request,
-        for session: Session,
-        dueTo error: Error,
-        completion: @escaping (RetryResult) -> Void
-    ) {
-        
-        /// auth 관련 요청 재시도 방지 로직 (무한루프 방지)
-        let path = normalizedPath(from: request)
-        if authPaths.contains(path) {
+    private func makeRefreshURL() -> URL? {
+        guard
+            let base = Bundle.main.object(forInfoDictionaryKey: "BASE_URL") as? String,
+            let baseURL = URL(string: base)
+        else { return nil }
+        let component = refreshPath.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+        return baseURL.appendingPathComponent(component)
+    }
+
+    // MARK: - Adapter
+    func adapt(_ urlRequest: URLRequest,
+               for session: Session,
+               completion: @escaping (Result<URLRequest, Error>) -> Void) {
+        var req = urlRequest
+
+        if let url = req.url, isExcluded(url) {
+            return completion(.success(req))
+        }
+
+        guard let token = tokenStore.accessToken, !token.isEmpty else {
+            return completion(.success(req))
+        }
+
+        /// 토큰 주입
+        req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        completion(.success(req))
+    }
+
+    // MARK: - Retrier
+    func retry(_ request: Request, for session: Session,
+               dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
+
+        guard request.retryCount < maxRetryCount else {
             return completion(.doNotRetry)
         }
-        
-        /// 상태코드가 없으면 재시도 안 함
-        guard let statusCode = (request.task?.response as? HTTPURLResponse)?.statusCode else {
+
+        guard let http = request.task?.response as? HTTPURLResponse else {
             return completion(.doNotRetry)
         }
-        
-        /// `401/403` 일때 토큰 갱신, 그 외는 재시도 안 함
-        guard statusCode == 401 || statusCode == 403 else {
+
+        /// 401/403이 아닌 경우에는 retry하지 않음
+        guard http.statusCode == 401 || http.statusCode == 403 else {
             return completion(.doNotRetry)
         }
-        
-        /// 동시성 제어: 모든 대기자를 큐에 쌓고, refresh 1회만 수행
-        lock.lock()
-        requestsToRetry.append(completion)
-        let shouldStartRefresh = !isRefreshing
-        if shouldStartRefresh { isRefreshing = true }
-        lock.unlock()
-        
-        /// 이미 누군가 갱신 중
-        guard shouldStartRefresh else { return }
-        
-        refreshTokens(using: session) { [weak self] succeeded in
-            guard let self else { return }
-            self.lock.lock()
-            let completions = self.requestsToRetry
-            self.requestsToRetry.removeAll()
-            self.isRefreshing = false
-            self.lock.unlock()
-            
-            let result: RetryResult = succeeded ? .retry : .doNotRetry
-            completions.forEach { $0(result) }
+
+        /// 인증 관련 endpoint 재시도 방어 코드
+        if isExcluded(request.request?.url) {
+            return completion(.doNotRetry)
+        }
+
+        /// refresh
+        Task {
+            let ok = await self.refreshTokens()
+            completion(ok ? .retry : .doNotRetry)
         }
     }
 
-    private func refreshTokens(
-        using session: Session,
-        completion: @escaping (Bool) -> Void
-    ) {
-        guard let baseURLString = Bundle.main.object(forInfoDictionaryKey: "BASE_URL") as? String,
-              let baseURL = URL(string: baseURLString)
-        else {
-            completion(false)
-            return
-        }
-        guard let refreshToken = tokenStore.refreshToken else {
-            completion(false)
-            return
+    // MARK: - Refresh
+    private func refreshTokens() async -> Bool {
+        guard let url = makeRefreshURL(),
+              let refreshToken = tokenStore.refreshToken, !refreshToken.isEmpty else {
+            return false
         }
 
-        let url = baseURL.appendingPathComponent(refreshPath)
-        var urlRequest = URLRequest(url: url)
-        urlRequest.method = .post
-        urlRequest.setValue(refreshToken, forHTTPHeaderField: "Refresh-Token")
+        var req = URLRequest(url: url)
+        req.method = .post
+        req.setValue(refreshToken, forHTTPHeaderField: "Refresh-Token")
 
-        session.request(urlRequest)
-            .validate(statusCode: 200..<300)
-            .responseDecodable(of: ResponseDTO<RefreshResponse>.self) { [weak self] response in
-                guard let self else { return }
-                
-                switch response.result {
-                case .success(let model):
-                    
-                    guard let responseData = model.data else { return }
-                    self.tokenStore.accessToken = responseData.accessToken
-                    self.tokenStore.refreshToken = responseData.refreshToken
-                    completion(true)
-                    
-                case .failure:
-                    self.tokenStore.clear()
-                    completion(false)
-                }
+        do {
+            let dto = try await refreshSession.request(req)
+                .validate(statusCode: 200..<300)
+                .serializingDecodable(ResponseDTO<RefreshResponse>.self)
+                .value
+
+            guard let data = dto.data else {
+                return false
             }
+
+            tokenStore.accessToken = data.accessToken
+            tokenStore.refreshToken = data.refreshToken
+            return true
+            
+        } catch {
+            return false
+        }
     }
 }
 
-// MARK: - RefreshResponse DTO
+// MARK: - RefreshResponse
 private struct RefreshResponse: Decodable {
     let accessToken: String
     let refreshToken: String
