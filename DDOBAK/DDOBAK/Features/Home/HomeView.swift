@@ -92,7 +92,7 @@ struct HomeView: View {
             }
             .onChange(of: viewModel.errorMessage) { _, errorMessage in
                 guard let errorMessage else { return }
-                DDOBakLogger.log(errorMessage, level: .debug, category: .feature(featureName: "Home"))
+                DDOBakLogger.log(errorMessage, level: .error, category: .feature(featureName: "Home"))
             }
             .task {
                 await viewModel.fetchUserAnalyses()
@@ -194,6 +194,11 @@ extension HomeView {
                                 }
                         }
                     }
+                } else if viewModel.isRecentAnalysesFetchFailed == true {
+                    Image("fetchError")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .buttonShadow()
                 } else {
                     ForEach(0..<3, id: \.self) { _ in
                         ContractAnalysisInfoCardView(viewData: .mock())
@@ -231,6 +236,11 @@ extension HomeView {
                                 navigationModel.push(.honeyTip(tipId: tipId))
                             }
                     }
+                } else if viewModel.isTipsFetchFailed == true {
+                    Image("fetchError")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .buttonShadow()
                 } else {
                     ForEach(0..<3, id: \.self) { _ in
                         TipCardView(viewData: .mock())

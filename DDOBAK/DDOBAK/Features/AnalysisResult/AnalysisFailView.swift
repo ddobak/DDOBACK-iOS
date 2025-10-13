@@ -14,7 +14,7 @@ struct AnalysisFailView: View {
     private let analysisFailImageName: String = "analysisFail"
     private let failText: String = "흠...\n이건 조금 어려운 문서네요!"
     private let failSubText: String = "또박이가 분석에 실패했어요...\n계약서가 아닌 사진을 업로드하지는 않았는지 확인해주세요!"
-    private let buttonText: String = "다시 분석하기"
+    private let buttonText: String = "사진 다시 올리기"
     
     var body: some View {
         VStack {
@@ -59,6 +59,10 @@ struct AnalysisFailView: View {
                     isLoading: false
                 )
             )
+            .onButtonTap {
+                navigationModel.pop()
+                navigationModel.push(.selectContractType)
+            }
             .padding(.bottom, 22)
         }
         .containerRelativeFrame([.horizontal, .vertical])
