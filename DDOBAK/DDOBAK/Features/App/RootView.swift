@@ -42,6 +42,9 @@ private extension RootView {
                     case .userInfoSetup:
                         UserInfoSetupView()
                         
+                    case .myPage:
+                        MyPageView()
+                        
                     case .selectContractType:
                         SelectContractTypeView()
                         

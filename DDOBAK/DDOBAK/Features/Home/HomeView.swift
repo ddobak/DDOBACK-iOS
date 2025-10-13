@@ -33,12 +33,7 @@ struct HomeView: View {
                 )
             )
             .onTrailingItemTap {
-                isShowingMyPageWarning = true
-            }
-            .alert("[TestFlight Mode] Cannot Access", isPresented: $isShowingMyPageWarning) {
-                Button("OK", role: .cancel) { }
-            } message: {
-                
+                navigationModel.push(.myPage)
             }
             .zIndex(1)
             
