@@ -13,8 +13,6 @@ final class AuthInterceptor: RequestInterceptor {
 
     private let tokenStore: AuthTokenStoreable
     private let excludedSuffixes: [String] = [
-        "auth/apple/login",
-        "auth/login",
         "auth/refresh"
     ]
 

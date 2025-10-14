@@ -9,7 +9,9 @@ import SwiftUI
 
 struct MyPageView: View {
     
+    @Environment(\.openURL) private var openURL
     @Environment(NavigationModel.self) private var navigationModel
+    
     @State private var viewModel: MyPageViewModel = .init()
     
     /// 로그아웃, 탈퇴 관련 Alert 프로퍼티
@@ -17,6 +19,9 @@ struct MyPageView: View {
     @State private var alertMessage: String = ""
     @State private var showAlert: Bool = false
     @State private var alertConfirmAction: (() -> Void)? = nil
+    
+    private let noticeUrlStr: String = "https://possible-raft-360.notion.site/ddobak-notice"
+    private let policyUrlStr: String = "https://possible-raft-360.notion.site/ddobak-privacy-policy"
     
     var body: some View {
         VStack(spacing: .zero) {
@@ -180,13 +185,23 @@ private extension MyPageView {
                     trailingItem: .icon(type: .arrow)
                 )
             )
+            .onSectionItemTap {
+                if let url = URL(string: noticeUrlStr) {
+                    openURL(url)
+                }
+            }
             
             DdobakSectionItem(
                 viewData: .init(
-                    leadingItemText: "정책",
+                    leadingItemText: "개인정보 처리방침",
                     trailingItem: .icon(type: .arrow)
                 )
             )
+            .onSectionItemTap {
+                if let url = URL(string: policyUrlStr) {
+                    openURL(url)
+                }
+            }
             
             DdobakSectionItem(
                 viewData: .init(
