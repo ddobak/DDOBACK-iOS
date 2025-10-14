@@ -41,13 +41,15 @@ final class LoginViewModel {
                 let _ = credential.email
 
                 // Identity token(JWT)
-                guard let token = credential.identityToken.flatMap({ String(data: $0, encoding: .utf8) }) else {
+                guard let identityToken = credential.identityToken.flatMap({ String(data: $0, encoding: .utf8) }),
+                      let authorizationCode = credential.authorizationCode.flatMap({ String(data: $0, encoding: .utf8) }) else {
                     showErrorAlert(alertMessage: "인증 토큰을 가져오지 못했습니다.\n 잠시 후 다시 시도해주세요.")
                     return
                 }
 
                 Task {
-                    await requestAppleSignIn(identityToken: token)
+                    await requestAppleSignIn(identityToken: identityToken,
+                                             authorizationCode: authorizationCode)
                 }
             }
             
@@ -56,13 +58,16 @@ final class LoginViewModel {
         }
     }
     
-    func requestAppleSignIn(identityToken: String) async {
+    func requestAppleSignIn(identityToken: String, authorizationCode: String) async {
         do {
-            let identityToken = ["identityToken": identityToken]
+            let body = [
+                "identityToken": identityToken,
+                "authorizationCode": authorizationCode
+            ]
             let appleLoginResponse: ResponseDTO<AppleLoginResponse> = try await APIClient.shared.request(
                 path: "/auth/apple/login",
                 method: .post,
-                body: identityToken
+                body: body
             )
             
             if let data = appleLoginResponse.data {
