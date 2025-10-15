@@ -176,9 +176,6 @@ extension HomeView {
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .buttonShadow()
-                            .onTapGesture {
-                                navigationModel.push(.analysisStatus(analysisStatus: .failed, contractData: .mock()))
-                            }
                     } else {
                         ForEach(recentAnalyses, id: \.self) { analysis in
                             ContractAnalysisInfoCardView(viewData: analysis)

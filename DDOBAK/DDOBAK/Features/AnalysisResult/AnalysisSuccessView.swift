@@ -49,7 +49,7 @@ struct AnalysisSuccessView: View {
                 )
             )
             .setAppearance(.light)
-            .onLeadingItemTap {
+            .onTrailingItemTap {
                 navigationModel.pop()
             }
             .zIndex(1)
