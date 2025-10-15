@@ -49,6 +49,7 @@ struct UserInfoSetupView: View {
         .background(.mainWhite)
         .loadingOverlay(isLoading: $viewModel.isLoading)
         .safeAreaInset(edge: .bottom) {
+            confirmButtonWithSkipView
         }
     }
 }
@@ -56,15 +57,16 @@ struct UserInfoSetupView: View {
 private extension UserInfoSetupView {
     
     /// 유저 생성 및 화면 전환 진행
-    private func processCreateUser() {
+    private func processCreateUser(isSkipping: Bool) {
         Task { @MainActor in
             /// (성공 여부, 생성된 `userName`)
-            let result = await viewModel.createUser(isSkipping: true)
-            navigationModel.popToRoot()
+            let result = await viewModel.createUser(isSkipping: isSkipping)
             
             if result.0 == true {
-                navigationModel.replaceRoot(with: .welcome(userName: result.1))
-                withAnimation { LoginStateStore.shared.update(isLoggedIn: true, userIdentifier: nil) }
+                withAnimation(.easeInOut) {
+                    LoginStateStore.shared.update(isLoggedIn: true, userIdentifier: nil)
+                }
+                navigationModel.push(.welcome(userName: result.1))
             }
         }
     }
@@ -75,10 +77,12 @@ private extension UserInfoSetupView {
             /// `건너뛰기` 신규 가입 시에만 노출
             if isEditing == false {
                 Button {
-                    processCreateUser()
+                    endEditing()
+                    processCreateUser(isSkipping: true)
                 } label: {
                     Text("건너뛰기")
                         .font(.ddobak(.caption1_m16))
+                        .underline()
                         .foregroundStyle(.gray5)
                 }
             }
@@ -102,7 +106,7 @@ private extension UserInfoSetupView {
                         if success { navigationModel.popToRoot() }
                         
                     case false:
-                        processCreateUser()
+                        processCreateUser(isSkipping: false)
                     }
                 }
             }
