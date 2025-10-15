@@ -30,15 +30,17 @@ final class UserInfoSetupViewViewModel {
         return true
     }
     
-    func createUser() async -> Bool {
+    func createUser(isSkipping: Bool = false) async -> Bool {
         isLoading = true
         defer { isLoading = false }
         
         do {
+            /// 건너뛰기 시 `김또박`으로 설정
+            let name: String = isSkipping ? "김또박" : userName
             let createUserResponse: ResponseDTO<Empty> = try await APIClient.shared.request(
                 path: "/user/profile",
                 method: .post,
-                body: ["name": userName]
+                body: ["name": name]
             )
             return createUserResponse.success
         } catch {

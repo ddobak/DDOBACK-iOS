@@ -49,6 +49,32 @@ struct UserInfoSetupView: View {
         .background(.mainWhite)
         .loadingOverlay(isLoading: $viewModel.isLoading)
         .safeAreaInset(edge: .bottom) {
+        }
+    }
+}
+
+private extension UserInfoSetupView {
+    
+    private var confirmButtonWithSkipView: some View {
+        VStack(spacing: 20) {
+            
+            /// `건너뛰기` 신규 가입 시에만 노출
+            if isEditing == false {
+                Button {
+                    Task { @MainActor in
+                        let success = await viewModel.createUser(isSkipping: true)
+                        navigationModel.popToRoot()
+                        if success {
+                            withAnimation { LoginStateStore.shared.update(isLoggedIn: true, userIdentifier: nil) }
+                        }
+                    }
+                } label: {
+                    Text("건너뛰기")
+                        .font(.ddobak(.caption1_m16))
+                        .foregroundStyle(.gray5)
+                }
+            }
+            
             DdobakButton(
                 viewData: .init(
                     title: "다음",
