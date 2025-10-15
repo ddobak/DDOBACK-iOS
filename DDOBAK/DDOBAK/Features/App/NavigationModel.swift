@@ -48,6 +48,7 @@ extension NavigationModel {
         
         /// 로그인
         case userInfoSetup(isEditing: Bool = false)
+        case welcome(userName: String)
         
         /// 유저
         case myPage

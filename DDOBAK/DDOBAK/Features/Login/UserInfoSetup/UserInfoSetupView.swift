@@ -55,19 +55,27 @@ struct UserInfoSetupView: View {
 
 private extension UserInfoSetupView {
     
+    /// 유저 생성 및 화면 전환 진행
+    private func processCreateUser() {
+        Task { @MainActor in
+            /// (성공 여부, 생성된 `userName`)
+            let result = await viewModel.createUser(isSkipping: true)
+            navigationModel.popToRoot()
+            
+            if result.0 == true {
+                navigationModel.replaceRoot(with: .welcome(userName: result.1))
+                withAnimation { LoginStateStore.shared.update(isLoggedIn: true, userIdentifier: nil) }
+            }
+        }
+    }
+    
     private var confirmButtonWithSkipView: some View {
         VStack(spacing: 20) {
             
             /// `건너뛰기` 신규 가입 시에만 노출
             if isEditing == false {
                 Button {
-                    Task { @MainActor in
-                        let success = await viewModel.createUser(isSkipping: true)
-                        navigationModel.popToRoot()
-                        if success {
-                            withAnimation { LoginStateStore.shared.update(isLoggedIn: true, userIdentifier: nil) }
-                        }
-                    }
+                    processCreateUser()
                 } label: {
                     Text("건너뛰기")
                         .font(.ddobak(.caption1_m16))
@@ -84,7 +92,7 @@ private extension UserInfoSetupView {
                 )
             )
             .onButtonTap {
-                Task { @MainActor in
+                Task {
                     endEditing()
                     
                     switch isEditing {
@@ -94,12 +102,7 @@ private extension UserInfoSetupView {
                         if success { navigationModel.popToRoot() }
                         
                     case false:
-                        /// 회원가입 후 `home`으로 화면 전환
-                        let success = await viewModel.createUser()
-                        navigationModel.popToRoot()
-                        if success {
-                            withAnimation { LoginStateStore.shared.update(isLoggedIn: true, userIdentifier: nil) }
-                        }
+                        processCreateUser()
                     }
                 }
             }

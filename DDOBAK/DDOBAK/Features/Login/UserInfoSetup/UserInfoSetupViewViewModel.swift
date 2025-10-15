@@ -30,7 +30,7 @@ final class UserInfoSetupViewViewModel {
         return true
     }
     
-    func createUser(isSkipping: Bool = false) async -> Bool {
+    func createUser(isSkipping: Bool = false) async -> (Bool, String) {
         isLoading = true
         defer { isLoading = false }
         
@@ -42,9 +42,9 @@ final class UserInfoSetupViewViewModel {
                 method: .post,
                 body: ["name": name]
             )
-            return createUserResponse.success
+            return (createUserResponse.success, name)
         } catch {
-            return false
+            return (false, "")
         }
     }
     

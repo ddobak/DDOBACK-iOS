@@ -46,6 +46,9 @@ private extension RootView {
                     case .userInfoSetup(let isEditing):
                         UserInfoSetupView(isEditing: isEditing)
                         
+                    case .welcome(let userName):
+                        WelcomeView(userName: userName)
+                        
                     case .myPage:
                         MyPageView()
                         
