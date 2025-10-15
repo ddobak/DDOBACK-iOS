@@ -58,17 +58,22 @@ struct UserInfoSetupView: View {
                 )
             )
             .onButtonTap {
-                Task {
+                Task { @MainActor in
                     endEditing()
                     
                     switch isEditing {
                     case true:
                         /// `userInfo` 변경 성공 시 `pop` 처리
                         let success = await viewModel.editUser()
-                        if success { navigationModel.pop() }
+                        if success { navigationModel.popToRoot() }
                         
                     case false:
-                        await viewModel.createUser()
+                        /// 회원가입 후 `home`으로 화면 전환
+                        let success = await viewModel.createUser()
+                        navigationModel.popToRoot()
+                        if success {
+                            withAnimation { LoginStateStore.shared.update(isLoggedIn: true, userIdentifier: nil) }
+                        }
                     }
                 }
             }

@@ -13,7 +13,8 @@ final class AuthInterceptor: RequestInterceptor {
 
     private let tokenStore: AuthTokenStoreable
     private let excludedSuffixes: [String] = [
-        "auth/refresh"
+        "auth/refresh",
+        "auth/apple/login"
     ]
 
     private let maxRetryCount: Int

@@ -30,7 +30,7 @@ final class UserInfoSetupViewViewModel {
         return true
     }
     
-    func createUser() async {
+    func createUser() async -> Bool {
         isLoading = true
         defer { isLoading = false }
         
@@ -40,13 +40,9 @@ final class UserInfoSetupViewViewModel {
                 method: .post,
                 body: ["name": userName]
             )
-            if createUserResponse.success == true {
-                withAnimation {
-                    LoginStateStore.shared.update(isLoggedIn: true, userIdentifier: nil)
-                }
-            }
+            return createUserResponse.success
         } catch {
-            
+            return false
         }
     }
     
