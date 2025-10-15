@@ -16,6 +16,8 @@ public protocol DdobakWebViewListener: AnyObject {
 struct DdobakWebView: UIViewRepresentable {
     
     let path: String
+    let tokenStore = KeyChainTokenStore()
+    
     weak var listener: DdobakWebViewListener?
     
     func makeCoordinator() -> Coordinator {
@@ -24,6 +26,19 @@ struct DdobakWebView: UIViewRepresentable {
     
     func makeUIView(context: Context) -> WKWebView {
         let contentController = WKUserContentController()
+        
+        /// `accessToken` cookie로 전달
+        let accessToken = tokenStore.accessToken.unwrapped(placeholder: "token")
+        let setTokenBridge = WKUserScript(
+            source:
+        """
+        window.__BRIDGE_TOKEN__ = '\(accessToken)'
+        """,
+            injectionTime: .atDocumentStart,
+            forMainFrameOnly: false
+        )
+        contentController.addUserScript(setTokenBridge)
+        
         contentController.add(context.coordinator, name: "goHome")
         contentController.add(context.coordinator, name: "savePdf")
         contentController.add(context.coordinator, name: "analyzeOther")
