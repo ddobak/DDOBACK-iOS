@@ -63,10 +63,18 @@ extension ArchiveListView {
                 }
             } else if let analyses = viewModel.archivedAnalyses {
                 if analyses.isEmpty {
-                    Image("emptyAnalysisResult")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .buttonShadow()
+                    Text("아직 또박이가 분석한 계약서가 없어요")
+                        .font(.ddobak(.body1_sb16))
+                        .foregroundStyle(.gray5)
+                        .centerAligned(adjustsForTopNavigationBar: true)
+                } else if viewModel.errorMessage != nil {
+                    Text("서비스에 일시적인 문제가 발생했어요\n잠시 후 다시 시도해주세요")
+                        .font(.ddobak(.body1_sb16))
+                        .foregroundStyle(.gray5)
+                        .centerAligned(adjustsForTopNavigationBar: true)
+                        .contextMenu {
+                            Text(viewModel.errorMessage.unwrapped(placeholder: "Unknown Error"))
+                        }
                 } else {
                     ForEach(analyses, id: \.self) { analysis in
                         ContractAnalysisInfoCardView(viewData: analysis)

@@ -15,6 +15,6 @@ extension View {
     func centerAligned(adjustsForTopNavigationBar: Bool) -> some View {
         self
             .containerRelativeFrame(.vertical, alignment: .center)
-            .padding(.bottom, adjustsForTopNavigationBar ? TopNavigationBarAppearance.topNavigationBarHeight : .zero)
+            .offset(y: adjustsForTopNavigationBar ? -TopNavigationBarAppearance.topNavigationBarHeight : .zero)
     }
 }
