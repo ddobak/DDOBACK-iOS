@@ -11,4 +11,10 @@ extension View {
     func endEditing() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
+    
+    func centerAligned(adjustsForTopNavigationBar: Bool) -> some View {
+        self
+            .containerRelativeFrame(.vertical, alignment: .center)
+            .padding(.bottom, adjustsForTopNavigationBar ? TopNavigationBarAppearance.topNavigationBarHeight : .zero)
+    }
 }
