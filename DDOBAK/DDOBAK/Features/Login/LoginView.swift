@@ -47,17 +47,28 @@ struct LoginView: View {
             Spacer()
                 .frame(height: 70)
             
-            /// 애플 로그인 버튼
-            SignInWithAppleButton(
-                .signIn,
-                onRequest: viewModel.configureAppleRequest,
-                onCompletion: viewModel.handleAppleCompletion
-            )
-            .signInWithAppleButtonStyle(.black)
-            .frame(height: 52)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            .padding(.horizontal, 20)
-            .padding(.bottom, 38)
+            VStack(spacing: 20) {
+                Button {
+                    navigationModel.push(.howToUse)
+                } label: {
+                    Text("상세 이용 가이드")
+                        .font(.ddobak(.caption1_m16))
+                        .underline()
+                        .foregroundStyle(.gray5)
+                }
+                
+                /// 애플 로그인 버튼
+                SignInWithAppleButton(
+                    .signIn,
+                    onRequest: viewModel.configureAppleRequest,
+                    onCompletion: viewModel.handleAppleCompletion
+                )
+                .signInWithAppleButtonStyle(.black)
+                .frame(height: 52)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .padding(.horizontal, 20)
+                .padding(.bottom, 22)
+            }
         }
         .background(.mainWhite)
         .animation(.easeInOut, value: viewModel.currentOnboardingImageIndex)
