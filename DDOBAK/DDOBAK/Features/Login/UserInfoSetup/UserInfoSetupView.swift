@@ -103,7 +103,7 @@ private extension UserInfoSetupView {
                     case true:
                         /// `userInfo` 변경 성공 시 `pop` 처리
                         let success = await viewModel.editUser()
-                        if success { navigationModel.popToRoot() }
+                        if success { navigationModel.pop() }
                         
                     case false:
                         processCreateUser(isSkipping: false)
