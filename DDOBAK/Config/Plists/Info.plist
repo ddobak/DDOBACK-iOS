@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>UIUserInterfaceStyle</key>
+	<string>Light</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>WantedSans-Bold.otf</string>
+		<string>WantedSans-SemiBold.otf</string>
+		<string>WantedSans-Medium.otf</string>
+		<string>WantedSans-Regular.otf</string>
+	</array>
+	<key>BASE_URL</key>
+	<string>$(BASE_URL)</string>
+	<key>CONFIGURATION_NAME</key>
+	<string>$(CONFIGURATION_NAME)</string>
+	<key>NSFileProviderDomainUsageDescription</key>
+	<string>계약서 파일 업로드를 위해 파일 접근 권한이 필요합니다.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>계약서 사진 업로드를 위해 앨범 접근 권한이 필요합니다.</string>
+	<key>WEBVIEW_BASE_URL</key>
+	<string>$(WEBVIEW_BASE_URL)</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>ko</string>
+	</array>
+</dict>
+</plist>

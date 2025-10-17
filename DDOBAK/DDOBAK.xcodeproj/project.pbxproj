@@ -6,11 +6,33 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		C628ECE12E8CD5AD000D08CA /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = C628ECE02E8CD5AD000D08CA /* Alamofire */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		C6E6227A2E06829600166DB4 /* DDOBAK.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DDOBAK.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		C67337FA2E1EB41700571C3D /* Exceptions for "Config" folder in "DDOBAK" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Plists/Info.plist,
+			);
+			target = C6E622792E06829600166DB4 /* DDOBAK */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		C67337EA2E1EAF3B00571C3D /* Config */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				C67337FA2E1EB41700571C3D /* Exceptions for "Config" folder in "DDOBAK" target */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
 		C6E6227C2E06829600166DB4 /* DDOBAK */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = DDOBAK;
@@ -23,6 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C628ECE12E8CD5AD000D08CA /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -32,6 +55,7 @@
 		C6E622712E06829600166DB4 = {
 			isa = PBXGroup;
 			children = (
+				C67337EA2E1EAF3B00571C3D /* Config */,
 				C6E6227C2E06829600166DB4 /* DDOBAK */,
 				C6E6227B2E06829600166DB4 /* Products */,
 			);
@@ -61,10 +85,12 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				C67337EA2E1EAF3B00571C3D /* Config */,
 				C6E6227C2E06829600166DB4 /* DDOBAK */,
 			);
 			name = DDOBAK;
 			packageProductDependencies = (
+				C628ECE02E8CD5AD000D08CA /* Alamofire */,
 			);
 			productName = DDOBAK;
 			productReference = C6E6227A2E06829600166DB4 /* DDOBAK.app */;
@@ -94,6 +120,9 @@
 			);
 			mainGroup = C6E622712E06829600166DB4;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				C628ECDF2E8CD5AD000D08CA /* XCRemoteSwiftPackageReference "Alamofire" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C6E6227B2E06829600166DB4 /* Products */;
 			projectDirPath = "";
@@ -127,6 +156,8 @@
 /* Begin XCBuildConfiguration section */
 		C6E622832E06829700166DB4 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = C67337EA2E1EAF3B00571C3D /* Config */;
+			baseConfigurationReferenceRelativePath = "DDOBAK-Debug.xcconfig";
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -191,6 +222,8 @@
 		};
 		C6E622842E06829700166DB4 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = C67337EA2E1EAF3B00571C3D /* Config */;
+			baseConfigurationReferenceRelativePath = "DDOBAK-Prod.xcconfig";
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -248,14 +281,19 @@
 		};
 		C6E622862E06829700166DB4 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = C67337EA2E1EAF3B00571C3D /* Config */;
+			baseConfigurationReferenceRelativePath = "DDOBAK-Debug.xcconfig";
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = DDOBAK/DDOBAK.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_TEAM = 6JLYLDSW4U;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Config/Plists/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "또박";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -267,7 +305,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.sabangpalbang.DDOBAK;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -282,14 +320,19 @@
 		};
 		C6E622872E06829700166DB4 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = C67337EA2E1EAF3B00571C3D /* Config */;
+			baseConfigurationReferenceRelativePath = "DDOBAK-Prod.xcconfig";
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = DDOBAK/DDOBAK.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_TEAM = 6JLYLDSW4U;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Config/Plists/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "또박";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -301,7 +344,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.sabangpalbang.DDOBAK;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -336,6 +379,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C628ECDF2E8CD5AD000D08CA /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C628ECE02E8CD5AD000D08CA /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C628ECDF2E8CD5AD000D08CA /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C6E622722E06829600166DB4 /* Project object */;
 }
