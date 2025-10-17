@@ -13,7 +13,7 @@ final class ArchiveListViewModel {
     var archivedAnalyses: [Contract]?
     
     var isLoading: Bool = false
-    var errorMessage: String?
+    var errorMessage: String? = nil
     
     @MainActor
     func refresh() async {
@@ -25,6 +25,7 @@ final class ArchiveListViewModel {
     @MainActor
     func fetchArchivedAnalyses() async {
         isLoading = true
+        errorMessage = nil
         defer { isLoading = false }
         
         do {
@@ -34,7 +35,6 @@ final class ArchiveListViewModel {
             )
             
             archivedAnalyses = response.data?.contracts
-            DDOBakLogger.log(archivedAnalyses, level: .info, category: .viewModel)
             
         } catch {
             handleError(error: error)

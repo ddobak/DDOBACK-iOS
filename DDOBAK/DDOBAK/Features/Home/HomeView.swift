@@ -33,12 +33,7 @@ struct HomeView: View {
                 )
             )
             .onTrailingItemTap {
-                isShowingMyPageWarning = true
-            }
-            .alert("[TestFlight Mode] Cannot Access", isPresented: $isShowingMyPageWarning) {
-                Button("OK", role: .cancel) { }
-            } message: {
-                
+                navigationModel.push(.myPage)
             }
             .zIndex(1)
             
@@ -61,17 +56,18 @@ struct HomeView: View {
                     Spacer()
                         .frame(height: 36)
                     
+                    /// 최근 분석 이력
                     recentAnalysesSection
                     
                     Spacer()
                         .frame(height: 36)
                     
+                    /// 가이드 살펴보기
                     howToUse
                         .padding(.horizontal, 20)
                     
                     Spacer()
                         .frame(height: 36)
-                    
                     
                     honeyTips
                     
@@ -91,7 +87,7 @@ struct HomeView: View {
             }
             .onChange(of: viewModel.errorMessage) { _, errorMessage in
                 guard let errorMessage else { return }
-                DDOBakLogger.log(errorMessage, level: .debug, category: .feature(featureName: "Home"))
+                DDOBakLogger.log(errorMessage, level: .error, category: .feature(featureName: "Home"))
             }
             .task {
                 await viewModel.fetchUserAnalyses()
@@ -183,11 +179,21 @@ extension HomeView {
                     } else {
                         ForEach(recentAnalyses, id: \.self) { analysis in
                             ContractAnalysisInfoCardView(viewData: analysis)
-                                .onCardViewTap { contractId, analysisId in
-                                    navigationModel.push(.analysisResult(contractId: contractId, analysisId: analysisId))
+                                .onCardViewTap { contractData in
+                                    /// `HomeView`에서 분석 `cardView` 선택 시 `analysisStatus` 노출 (이후에 결과 페이지 노출됨)
+                                    navigationModel.push(.analysisStatus(analysisStatus: contractData.analysisStatus,
+                                                                         contractData: contractData))
                                 }
                         }
                     }
+                } else if viewModel.isRecentAnalysesFetchFailed == true {
+                    Image("fetchError")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .buttonShadow()
+                        .contextMenu {
+                            Text(viewModel.errorMessage.unwrapped(placeholder: "Unknown error"))
+                        }
                 } else {
                     ForEach(0..<3, id: \.self) { _ in
                         ContractAnalysisInfoCardView(viewData: .mock())
@@ -225,6 +231,11 @@ extension HomeView {
                                 navigationModel.push(.honeyTip(tipId: tipId))
                             }
                     }
+                } else if viewModel.isTipsFetchFailed == true {
+                    Image("fetchError")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .buttonShadow()
                 } else {
                     ForEach(0..<3, id: \.self) { _ in
                         TipCardView(viewData: .mock())

@@ -11,7 +11,10 @@ import SwiftUI
 final class HomeViewModel {
     
     var recentAnalyses: [Contract]?
+    var isRecentAnalysesFetchFailed: Bool = false
+    
     var tips: [Tip]?
+    var isTipsFetchFailed: Bool = false
     
     var isLoading: Bool = false
     var errorMessage: String?
@@ -30,6 +33,7 @@ final class HomeViewModel {
     @MainActor
     func fetchUserAnalyses(requestCount: Int = 3) async {
         isLoading = true
+        isRecentAnalysesFetchFailed = false
         defer { isLoading = false }
         
         do {
@@ -42,9 +46,9 @@ final class HomeViewModel {
             )
             
             recentAnalyses = response.data?.contracts
-            DDOBakLogger.log(recentAnalyses, level: .info, category: .viewModel)
             
         } catch {
+            isRecentAnalysesFetchFailed = true
             handleError(error: error)
         }
     }
@@ -52,6 +56,7 @@ final class HomeViewModel {
     @MainActor
     func fetchTips() async {
         isLoading = true
+        isTipsFetchFailed = false
         defer { isLoading = false }
         
         do {
@@ -61,9 +66,9 @@ final class HomeViewModel {
             )
             
             tips = response.data
-            DDOBakLogger.log(recentAnalyses, level: .info, category: .viewModel)
             
         } catch {
+            isTipsFetchFailed = true
             handleError(error: error)
         }
     }

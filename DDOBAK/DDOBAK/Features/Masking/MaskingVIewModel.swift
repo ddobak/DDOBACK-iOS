@@ -164,11 +164,13 @@ extension MaskingViewModel {
     enum ToolType: CaseIterable {
         case marker
         case eraser
+        case disabled
 
         var displayName: String {
             switch self {
             case .marker: return "그리기"
             case .eraser: return "지우개"
+            case .disabled: return ""
             }
         }
         
@@ -176,6 +178,7 @@ extension MaskingViewModel {
             switch self {
             case .marker: return "brush"
             case .eraser: return "eraser"
+            case .disabled: return ""
             }
         }
     }
@@ -191,9 +194,21 @@ extension MaskingViewModel {
         /// 이미지 크기에 따른 PKCanvas 사이즈
         func calculateCanvasSize(verticalSafeAreaInset: CGFloat) -> CGSize {
             let excludedHeights = verticalSafeAreaInset + 42 + 12 + 71 + 20 + 27 + 22
-            let height = UIScreen.main.bounds.height - excludedHeights
+            let availableHeight = max(0, UIScreen.main.bounds.height - excludedHeights)
             let ratio = imageAspectRatio
-            return CGSize(width: height * ratio, height: height)
+            let maxWidth = UIScreen.main.bounds.width
+
+            /// 높이 기준 비율에 맞는 너비값 계산
+            var width = availableHeight * ratio
+            var height = availableHeight
+
+            /// 계산된 너비가 최대 너비를 넘으면 비율에 맞게 크기를 재계산
+            if width > maxWidth {
+                width = maxWidth
+                height = maxWidth / ratio
+            }
+
+            return CGSize(width: width, height: height)
         }
 
         /// 이미지 가로 세로 비율

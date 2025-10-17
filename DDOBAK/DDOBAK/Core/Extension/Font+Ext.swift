@@ -35,6 +35,7 @@ extension Font {
         case caption1_m16
         case caption2_m12
         case caption3_r12
+        case content1_r24
         
         var size: CGFloat {
             switch self {
@@ -57,6 +58,7 @@ extension Font {
             case .caption1_m16: return 16
             case .caption2_m12: return 12
             case .caption3_r12: return 12
+            case .content1_r24: return 24
             }
         }
         
@@ -68,7 +70,7 @@ extension Font {
                 return .Medium
             case .body1_b16, .body2_b14:
                 return .Bold
-            case .caption3_r12:
+            case .caption3_r12, .content1_r24:
                 return .Regular
             }
         }

@@ -14,7 +14,7 @@ struct ContractAnalysisInfoCardView: View, Equatable {
     
     // FIXME: Change DTO to Domain
     private let viewData: Contract
-    private var action: (((String, String)) -> Void)?
+    private var action: ((Contract) -> Void)?
     
     init(viewData: Contract) {
         self.viewData = viewData
@@ -62,7 +62,7 @@ struct ContractAnalysisInfoCardView: View, Equatable {
         .onTapGesture {
             // 분석 중이 아닐때만 액션 처리
             if viewData.analysisStatus != .inProgress {
-                action?((viewData.contractId, viewData.analysisId))
+                action?((viewData))
             }
         }
     }
@@ -73,7 +73,7 @@ struct ContractAnalysisInfoCardView: View, Equatable {
 }
 
 extension ContractAnalysisInfoCardView {
-    func onCardViewTap(action: @escaping ((String, String)) -> Void) -> Self {
+    func onCardViewTap(action: @escaping ((Contract)) -> Void) -> Self {
         var newSelf = self
         newSelf.action = action
         return newSelf

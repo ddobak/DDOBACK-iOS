@@ -5,25 +5,28 @@
 //  Created by 이건우 on 7/10/25.
 //
 
-enum APIError: Error {
+import Foundation
+
+enum APIError: Error, LocalizedError {
     case invalidURL
     case invalidResponse
     case statusCode(Int)
     case decoding(Error)
-    
-    var localizedDescription: String {
+    case refreshFailed
+    case unauthorized
+    case multipartEncodingFailed
+    case unknown(Error)
+
+    public var errorDescription: String? {
         switch self {
-        case .invalidURL:
-            return "Invalid URL - 잘못된 URL입니다."
-
-        case .invalidResponse:
-            return "Invalid Response - 서버 응답이 올바르지 않습니다."
-
-        case .statusCode(let code):
-            return "HTTP Status Code: \(code) - 서버에서 오류 코드가 반환되었습니다."
-
-        case .decoding(let error):
-            return "Decoding Error - \(decodingErrorDescription(error))"
+        case .invalidURL: return "Invalid URL."
+        case .invalidResponse: return "Invalid response."
+        case .statusCode(let code): return "Unexpected status code: \(code)"
+        case .decoding(let err): return "Decoding failed: \(decodingErrorDescription(err))"
+        case .refreshFailed: return "Token refresh failed."
+        case .unauthorized: return "Unauthorized."
+        case .multipartEncodingFailed: return "Multipart encoding failed."
+        case .unknown(let err): return "Unknown error: \(err)"
         }
     }
 
