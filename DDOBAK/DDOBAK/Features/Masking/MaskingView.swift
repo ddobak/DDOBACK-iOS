@@ -221,6 +221,7 @@ extension MaskingView {
                     )
             )
             .onTapGesture {
+                HapticManager.shared.selectionChanged()
                 viewModel.selectImage(at: index)
             }
     }
@@ -249,6 +250,9 @@ extension MaskingView {
             
             Slider(value: $drawingToolWidth, in: 1...30, step: 3)
                 .tint(.mainWhite)
+                .onChange(of: drawingToolWidth) { _, _ in
+                    HapticManager.shared.selectionChanged()
+                }
         }
         .padding(.horizontal, 20)
         .frame(height: 27)

@@ -18,14 +18,6 @@ public class HapticManager {
         self.hapticEngine = createEngine()
     }
     
-    /// 톡
-    public func soft() {
-        let generator = UIImpactFeedbackGenerator(style: .soft)
-        generator.prepare()
-        generator.impactOccurred()
-    }
-    
-    /// 드르륵
     public func selectionChanged() {
         let generator = UISelectionFeedbackGenerator()
         generator.prepare()

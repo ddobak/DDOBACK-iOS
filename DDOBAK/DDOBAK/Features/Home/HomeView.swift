@@ -33,6 +33,7 @@ struct HomeView: View {
                 )
             )
             .onTrailingItemTap {
+                HapticManager.shared.selectionChanged()
                 navigationModel.push(.myPage)
             }
             .zIndex(1)
@@ -139,6 +140,7 @@ extension HomeView {
     private var mainFeatureNavigator: some View {
         HStack(spacing: 10) {
             Button {
+                HapticManager.shared.selectionChanged()
                 navigationModel.push(.selectContractType)
             } label: {
                 Image("analysis")
@@ -150,6 +152,7 @@ extension HomeView {
             }
             
             Button {
+                HapticManager.shared.selectionChanged()
                 navigationModel.push(.archiveList)
             } label: {
                 Image("archive")
