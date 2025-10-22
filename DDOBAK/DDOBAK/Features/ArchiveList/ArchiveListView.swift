@@ -68,12 +68,13 @@ extension ArchiveListView {
                 }
             } else if let analyses = viewModel.archivedAnalyses {
                 if analyses.isEmpty {
-                    Text("아직 또박이가 분석한 계약서가 없어요")
+                    Text("아직 또박이가 분석을 완료한 계약서가 없어요")
                         .font(.ddobak(.body1_sb16))
                         .foregroundStyle(.gray5)
                         .centerAligned(adjustsForTopNavigationBar: true)
                 } else {
-                    ForEach(analyses, id: \.self) { analysis in
+                    /// `.inProgress`가 아닌 상태의 데이터만 노출
+                    ForEach(analyses.filter { $0.analysisStatus != .inProgress }, id: \.self) { analysis in
                         ContractAnalysisInfoCardView(viewData: analysis)
                             .onCardViewTap { contractData in
                                 
