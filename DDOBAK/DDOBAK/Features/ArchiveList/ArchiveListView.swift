@@ -50,6 +50,11 @@ struct ArchiveListView: View {
         .refreshable {
             await viewModel.refresh()
         }
+        .alert(viewModel.errorMessage.unwrapped(placeholder: "서비스에 일시적인 문제가 발생했어요"), isPresented: $viewModel.showErrorAlert) {
+            Button("확인", role: .cancel) {
+                viewModel.showErrorAlert = false
+            }
+        }
     }
 }
 
@@ -67,23 +72,25 @@ extension ArchiveListView {
                         .font(.ddobak(.body1_sb16))
                         .foregroundStyle(.gray5)
                         .centerAligned(adjustsForTopNavigationBar: true)
-                } else if viewModel.errorMessage != nil {
-                    Text("서비스에 일시적인 문제가 발생했어요\n잠시 후 다시 시도해주세요")
-                        .font(.ddobak(.body1_sb16))
-                        .foregroundStyle(.gray5)
-                        .centerAligned(adjustsForTopNavigationBar: true)
-                        .contextMenu {
-                            Text(viewModel.errorMessage.unwrapped(placeholder: "Unknown Error"))
-                        }
                 } else {
                     ForEach(analyses, id: \.self) { analysis in
                         ContractAnalysisInfoCardView(viewData: analysis)
                             .onCardViewTap { contractData in
+                                
                                 /// `ArchiveList`에서 분석 `cardView` 선택 시 `analysisStatus` 생략하고 바로 결과 페이지 노출됨.
                                 navigationModel.push(.analysisResult(contractId: contractData.contractId,
                                                                      analysisId: contractData.analysisId))
                                 
                                 
+                            }
+                            .contextMenu {
+                                Button(role: .destructive) {
+                                    Task {
+                                        await viewModel.deleteArchivedAnalysis(contractId: analysis.contractId)
+                                    }
+                                } label: {
+                                    Label("삭제", systemImage: "trash")
+                                }
                             }
                     }
                 }
