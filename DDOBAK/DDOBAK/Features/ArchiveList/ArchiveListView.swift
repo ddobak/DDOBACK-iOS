@@ -85,17 +85,40 @@ extension ArchiveListView {
                                 
                             }
                             .contextMenu {
+                                
+                                /// 삭제 버튼
                                 Button(role: .destructive) {
                                     Task {
                                         await viewModel.deleteArchivedAnalysis(contractId: analysis.contractId)
                                     }
                                 } label: {
                                     Label("삭제", systemImage: "trash")
+                                        .font(.ddobak(.body2_m14))
+                                }
+                                
+                                /// 공유 버튼
+                                if let baseURLString = Bundle.main.object(forInfoDictionaryKey: "WEBVIEW_BASE_URL") as? String,
+                                   let shareURL = buildShareURL(baseURLString: baseURLString,
+                                                                contractId: analysis.contractId,
+                                                                analysisId: analysis.analysisId)
+                                {
+                                    ShareLink(item: shareURL) {
+                                        Label("공유", systemImage: "square.and.arrow.up")
+                                    }
                                 }
                             }
                     }
                 }
             }
         }
+    }
+    
+    private func buildShareURL(baseURLString: String, contractId: String, analysisId: String) -> URL? {
+        guard var components = URLComponents(string: baseURLString) else { return nil }
+        components.queryItems = [
+            URLQueryItem(name: "contId", value: contractId),
+            URLQueryItem(name: "analysisId", value: analysisId)
+        ]
+        return components.url
     }
 }
