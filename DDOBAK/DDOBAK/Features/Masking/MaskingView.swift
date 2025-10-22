@@ -39,7 +39,7 @@ struct MaskingView: View {
                     shouldShowleadingItem: true,
                     leadingItem: .backButton,
                     shouldShowNavigationTitle: true,
-                    navigationTitle: "Masks",
+                    navigationTitle: "마스킹",
                     shouldShowTrailingItem: true,
                     trailingItem: .text("완료")
                 )
@@ -49,6 +49,7 @@ struct MaskingView: View {
                 dismiss()
             }
             .onTrailingItemTap {
+                HapticManager.shared.selectionChanged()
                 Task {
                     guard let selectedContractType = contractAnalysisFlowModel.selectedContractType else {
                         return
