@@ -71,12 +71,13 @@ struct HomeView: View {
                     
                     honeyTips
                     
+                    copyright
+                        .padding(.vertical, 30)
+                    
                     #if DEBUG
                     debugOption
                         .padding(.vertical, 30)
                     #endif
-                    
-                    Spacer()
                 }
             }
             .ignoresSafeArea(edges: .bottom)
@@ -249,6 +250,12 @@ extension HomeView {
         .padding(.top, 20)
         .padding(.bottom, 24)
         .background(Color.mainBlue)
+    }
+    
+    private var copyright: some View {
+        Text("© 2025 DDOBAK. All rights reserved.")
+            .font(.ddobak(.caption3_r12))
+            .foregroundStyle(.gray6)
     }
 }
 
