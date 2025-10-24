@@ -72,6 +72,7 @@ extension SelectContractTypeView {
         VStack(spacing: 12) {
             ForEach(ContractType.allCases.filter { $0 != .none }, id: \.self) { type in
                 Button {
+                    HapticManager.shared.selectionChanged()
                     viewModel.selectedContractType = type
                 } label: {
                     Image(type.thumbnailImageName(selected: viewModel.selectedContractType == type))

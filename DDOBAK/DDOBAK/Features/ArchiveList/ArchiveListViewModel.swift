@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Alamofire
 
 @Observable
 final class ArchiveListViewModel {
@@ -13,7 +14,8 @@ final class ArchiveListViewModel {
     var archivedAnalyses: [Contract]?
     
     var isLoading: Bool = false
-    var errorMessage: String? = nil
+    var errorMessage: String?
+    var showErrorAlert: Bool = false
     
     @MainActor
     func refresh() async {
@@ -41,6 +43,32 @@ final class ArchiveListViewModel {
         }
     }
     
+    @MainActor
+    func deleteArchivedAnalysis(contractId: String) async {
+        isLoading = true
+        errorMessage = nil
+        defer { isLoading = false }
+        
+        do {
+            let response: ResponseDTO<Empty> = try await APIClient.shared.request(
+                path: "/contract/\(contractId)",
+                method: .delete
+            )
+            
+            guard response.success == true else {
+                throw APIError.statusCode(response.code)
+            }
+            
+            withAnimation {
+                /// 로컬에서 바로 삭제
+                archivedAnalyses?.removeAll { $0.id == contractId }
+            }
+            
+        } catch {
+            handleError(error: error)
+        }
+    }
+    
     private func clearData() {
         archivedAnalyses = nil
     }
@@ -48,5 +76,6 @@ final class ArchiveListViewModel {
     private func handleError(error: Error) {
         guard let error = error as? APIError else { return }
         errorMessage = error.localizedDescription
+        showErrorAlert = true
     }
 }
