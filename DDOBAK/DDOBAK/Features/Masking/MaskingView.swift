@@ -39,7 +39,7 @@ struct MaskingView: View {
                     shouldShowleadingItem: true,
                     leadingItem: .backButton,
                     shouldShowNavigationTitle: true,
-                    navigationTitle: "Masks",
+                    navigationTitle: "마스킹",
                     shouldShowTrailingItem: true,
                     trailingItem: .text("완료")
                 )
@@ -49,6 +49,7 @@ struct MaskingView: View {
                 dismiss()
             }
             .onTrailingItemTap {
+                HapticManager.shared.selectionChanged()
                 Task {
                     guard let selectedContractType = contractAnalysisFlowModel.selectedContractType else {
                         return
@@ -221,6 +222,7 @@ extension MaskingView {
                     )
             )
             .onTapGesture {
+                HapticManager.shared.selectionChanged()
                 viewModel.selectImage(at: index)
             }
     }
@@ -249,6 +251,9 @@ extension MaskingView {
             
             Slider(value: $drawingToolWidth, in: 1...30, step: 3)
                 .tint(.mainWhite)
+                .onChange(of: drawingToolWidth) { _, _ in
+                    HapticManager.shared.selectionChanged()
+                }
         }
         .padding(.horizontal, 20)
         .frame(height: 27)
