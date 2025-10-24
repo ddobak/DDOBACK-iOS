@@ -73,7 +73,7 @@ struct MaskingView: View {
                 .padding(.bottom, 22)
                 .background(Color.mainBlack)
         }
-        .loadingOverlay(isLoading: $viewModel.isLoading)
+        .loadingOverlay(isLoading: $viewModel.isLoading, opacity: 0.5, tintColor: .white)
         .alert(viewModel.errorMessage ?? "OCR 과정에서 문제가 발생했어요.", isPresented: $viewModel.showErrorAlert) {
             Button("확인", role: .cancel) {
                 viewModel.showErrorAlert = false
