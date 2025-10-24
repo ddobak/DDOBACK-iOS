@@ -16,6 +16,7 @@ struct MaskingView: View {
     @StateObject private var viewModel: MaskingViewModel
     @State private var drawingToolWidth: CGFloat = 15
     @State private var drawingAreaSize: CGSize = .zero
+    @State private var previousStep: Double = .zero
     
     // MARK: DragGesture State Value
     @State private var scale: CGFloat = 1
@@ -251,8 +252,12 @@ extension MaskingView {
             
             Slider(value: $drawingToolWidth, in: 1...30, step: 3)
                 .tint(.mainWhite)
-                .onChange(of: drawingToolWidth) { _, _ in
-                    HapticManager.shared.selectionChanged()
+                .onChange(of: drawingToolWidth) { _, newValue in
+                    let currentStep = round(newValue / 3)
+                    if currentStep != round(previousStep / 3) {
+                        HapticManager.shared.selectionChanged()
+                    }
+                    previousStep = newValue
                 }
         }
         .padding(.horizontal, 20)
