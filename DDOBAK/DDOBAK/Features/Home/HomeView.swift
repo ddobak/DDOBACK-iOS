@@ -6,12 +6,14 @@
 //
 
 import SwiftUI
+import BetterSafariView
 
 struct HomeView: View {
     
     @Environment(NavigationModel.self) private var navigationModel
     
     @State private var viewModel: HomeViewModel = .init()
+    @State private var showNoticeWebView: Bool = false
     
     // for debug
     @State private var isShowingTokenAlert: Bool = false
@@ -126,6 +128,12 @@ extension HomeView {
         .background {
             Capsule()
                 .foregroundStyle(.mainBlue.opacity(0.1))
+        }
+        .onTapGesture {
+            showNoticeWebView = true
+        }
+        .safariView(isPresented: $showNoticeWebView) {
+            SafariView(url: .init(string: NotionWebViewConfig.noticeUrlStr)!)
         }
     }
     

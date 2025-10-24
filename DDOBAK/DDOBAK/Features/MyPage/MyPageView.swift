@@ -20,9 +20,6 @@ struct MyPageView: View {
     @State private var showAlert: Bool = false
     @State private var alertConfirmAction: (() -> Void)? = nil
     
-    private let noticeUrlStr: String = "https://possible-raft-360.notion.site/ddobak-notice"
-    private let policyUrlStr: String = "https://possible-raft-360.notion.site/ddobak-privacy-policy"
-    
     var body: some View {
         VStack(spacing: .zero) {
             TopNavigationBar(
@@ -186,7 +183,7 @@ private extension MyPageView {
                 )
             )
             .onSectionItemTap {
-                if let url = URL(string: noticeUrlStr) {
+                if let url = URL(string: NotionWebViewConfig.noticeUrlStr) {
                     openURL(url)
                 }
             }
@@ -198,7 +195,7 @@ private extension MyPageView {
                 )
             )
             .onSectionItemTap {
-                if let url = URL(string: policyUrlStr) {
+                if let url = URL(string: NotionWebViewConfig.policyUrlStr) {
                     openURL(url)
                 }
             }
