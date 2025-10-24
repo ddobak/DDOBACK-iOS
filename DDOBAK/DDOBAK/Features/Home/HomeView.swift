@@ -135,6 +135,10 @@ extension HomeView {
             .aspectRatio(contentMode: .fit)
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .buttonShadow()
+            .onTapGesture {
+                HapticManager.shared.selectionChanged()
+                navigationModel.push(.selectContractType)
+            }
     }
     
     private var mainFeatureNavigator: some View {
