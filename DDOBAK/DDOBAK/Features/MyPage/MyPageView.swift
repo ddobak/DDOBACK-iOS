@@ -6,13 +6,15 @@
 //
 
 import SwiftUI
+import BetterSafariView
 
 struct MyPageView: View {
     
-    @Environment(\.openURL) private var openURL
     @Environment(NavigationModel.self) private var navigationModel
     
     @State private var viewModel: MyPageViewModel = .init()
+    @State private var showNoticeNotionWebView: Bool = false
+    @State private var showNoticePolicyWebView: Bool = false
     
     /// 로그아웃, 탈퇴 관련 Alert 프로퍼티
     @State private var alertTitle: String = ""
@@ -91,6 +93,12 @@ struct MyPageView: View {
             }
         } message: {
             Text(alertMessage)
+        }
+        .safariView(isPresented: $showNoticeNotionWebView) {
+            SafariView(url: .init(string: NotionWebViewConfig.noticeUrlStr)!)
+        }
+        .safariView(isPresented: $showNoticePolicyWebView) {
+            SafariView(url: .init(string: NotionWebViewConfig.policyUrlStr)!)
         }
     }
 }
@@ -183,9 +191,8 @@ private extension MyPageView {
                 )
             )
             .onSectionItemTap {
-                if let url = URL(string: NotionWebViewConfig.noticeUrlStr) {
-                    openURL(url)
-                }
+                /// 공지사항 노션 웹뷰 (SFSafari)
+                showNoticeNotionWebView = true
             }
             
             DdobakSectionItem(
@@ -195,9 +202,8 @@ private extension MyPageView {
                 )
             )
             .onSectionItemTap {
-                if let url = URL(string: NotionWebViewConfig.policyUrlStr) {
-                    openURL(url)
-                }
+                /// 개인정보 노션 웹뷰 (SFSafari)
+                showNoticePolicyWebView = true
             }
             
             DdobakSectionItem(

@@ -13,7 +13,7 @@ struct HomeView: View {
     @Environment(NavigationModel.self) private var navigationModel
     
     @State private var viewModel: HomeViewModel = .init()
-    @State private var showNoticeWebView: Bool = false
+    @State private var showNoticeNotionWebView: Bool = false
     
     // for debug
     @State private var isShowingTokenAlert: Bool = false
@@ -130,9 +130,9 @@ extension HomeView {
                 .foregroundStyle(.mainBlue.opacity(0.1))
         }
         .onTapGesture {
-            showNoticeWebView = true
+            showNoticeNotionWebView = true
         }
-        .safariView(isPresented: $showNoticeWebView) {
+        .safariView(isPresented: $showNoticeNotionWebView) {
             SafariView(url: .init(string: NotionWebViewConfig.noticeUrlStr)!)
         }
     }
