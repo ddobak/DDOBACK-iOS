@@ -9,6 +9,18 @@ import SwiftUI
 
 struct LoadableStyle: ViewModifier {
     @Binding var isLoading: Bool
+    private let opacity: CGFloat
+    private let tintColor: Color?
+    
+    init(
+        isLoading: Binding<Bool>,
+        opacity: CGFloat,
+        tintColor: Color?
+    ) {
+        self._isLoading = isLoading
+        self.opacity = opacity
+        self.tintColor = tintColor
+    }
     
     func body(content: Content) -> some View {
         ZStack {
@@ -16,11 +28,12 @@ struct LoadableStyle: ViewModifier {
                 .allowsTightening(false)
             
             if isLoading {
-                Color.black.opacity(0.2)
+                Color.black.opacity(opacity)
                     .ignoresSafeArea(.all)
                 
                 ProgressView()
                     .ignoresSafeArea(.all)
+                    .tint(tintColor)
             }
         }
     }
@@ -28,8 +41,10 @@ struct LoadableStyle: ViewModifier {
 
 extension View {
     func loadingOverlay(
-        isLoading: Binding<Bool>
+        isLoading: Binding<Bool>,
+        opacity: CGFloat = 0.2,
+        tintColor: Color? = nil
     ) -> some View {
-        self.modifier(LoadableStyle(isLoading: isLoading))
+        self.modifier(LoadableStyle(isLoading: isLoading, opacity: opacity, tintColor: tintColor))
     }
 }

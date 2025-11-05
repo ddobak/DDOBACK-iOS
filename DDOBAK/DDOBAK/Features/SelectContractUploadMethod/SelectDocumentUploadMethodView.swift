@@ -19,6 +19,7 @@ struct SelectContractUploadMethodView: View {
     @State private var showPhotosPicker: Bool = false
     @State private var showMaskingView: Bool = false
     @State private var showPDFPicker: Bool = false
+    @State private var showCamera: Bool = false
     
     @State private var alertErrorDescription: String?
     @State private var showErrorAlert: Bool = false
@@ -68,6 +69,19 @@ struct SelectContractUploadMethodView: View {
         .alert(alertErrorDescription ?? "이미지 처리에 문제가 발생했어요", isPresented: $showErrorAlert) {
             Button("확인", role: .cancel) { }
         }
+        .sheet(isPresented: $showCamera) {
+            CameraCaptureView(
+                onImageCaptured: { image in
+                    selectedImages = [image]
+                    showCamera = false
+                    showMaskingView = true
+                },
+                onCancel: {
+                    showCamera = false
+                }
+            )
+            .ignoresSafeArea()
+        }
         .photosPicker(
             isPresented: $showPhotosPicker,
             selection: $imageSelection,
@@ -111,14 +125,14 @@ extension SelectContractUploadMethodView {
         VStack(spacing: 8) {
             DdobakButton(
                 viewData: .init(
-                    title: "PDF 업로드하기",
+                    title: "카메라로 촬영하기",
                     buttonType: .white,
                     isEnabled: true,
                     isLoading: false
                 )
             )
             .onButtonTap {
-                showPDFPicker = true
+                startCameraCapture()
             }
             
             DdobakButton(
@@ -133,12 +147,63 @@ extension SelectContractUploadMethodView {
                 imageSelection = .init()
                 showPhotosPicker = true
             }
+            
+            DdobakButton(
+                viewData: .init(
+                    title: "PDF 업로드하기",
+                    buttonType: .white,
+                    isEnabled: true,
+                    isLoading: false
+                )
+            )
+            .onButtonTap {
+                showPDFPicker = true
+            }
         }
     }
 }
 
 // MARK: Methods
 extension SelectContractUploadMethodView {
+    private func startCameraCapture() {
+        #if targetEnvironment(simulator)
+        alertErrorDescription = "시뮬레이터에서는 카메라를 사용할 수 없어요."
+        showErrorAlert = true
+        return
+        #else
+        if UIImagePickerController.isSourceTypeAvailable(.camera) == false {
+            alertErrorDescription = "이 기기에서는 카메라를 사용할 수 없어요."
+            showErrorAlert = true
+            return
+        }
+
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+        case .authorized:
+            showCamera = true
+
+        case .notDetermined:
+            AVCaptureDevice.requestAccess(for: .video) { granted in
+                DispatchQueue.main.async {
+                    if granted {
+                        self.showCamera = true
+                    } else {
+                        self.alertErrorDescription = "카메라 권한이 거부되어 촬영할 수 없어요. 설정에서 권한을 허용해 주세요."
+                        self.showErrorAlert = true
+                    }
+                }
+            }
+
+        case .denied, .restricted:
+            alertErrorDescription = "카메라 권한이 거부되어 촬영할 수 없어요. 설정에서 권한을 허용해 주세요."
+            showErrorAlert = true
+
+        @unknown default:
+            alertErrorDescription = "카메라 권한 상태를 확인할 수 없어요."
+            showErrorAlert = true
+        }
+        #endif
+    }
+    
     private func handleImageSelection(items: [PhotosPickerItem]) {
         Task {
             selectedImages = .init()
@@ -245,3 +310,4 @@ extension SelectContractUploadMethodView {
     SelectContractUploadMethodView()
         .environment(NavigationModel())
 }
+
