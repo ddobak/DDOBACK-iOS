@@ -16,6 +16,7 @@ struct MaskingView: View {
     @StateObject private var viewModel: MaskingViewModel
     @State private var drawingToolWidth: CGFloat = 15
     @State private var drawingAreaSize: CGSize = .zero
+    @State private var previousStep: Double = .zero
     
     // MARK: DragGesture State Value
     @State private var scale: CGFloat = 1
@@ -72,7 +73,7 @@ struct MaskingView: View {
                 .padding(.bottom, 22)
                 .background(Color.mainBlack)
         }
-        .loadingOverlay(isLoading: $viewModel.isLoading)
+        .loadingOverlay(isLoading: $viewModel.isLoading, opacity: 0.5, tintColor: .white)
         .alert(viewModel.errorMessage ?? "OCR 과정에서 문제가 발생했어요.", isPresented: $viewModel.showErrorAlert) {
             Button("확인", role: .cancel) {
                 viewModel.showErrorAlert = false
@@ -251,8 +252,12 @@ extension MaskingView {
             
             Slider(value: $drawingToolWidth, in: 1...30, step: 3)
                 .tint(.mainWhite)
-                .onChange(of: drawingToolWidth) { _, _ in
-                    HapticManager.shared.selectionChanged()
+                .onChange(of: drawingToolWidth) { _, newValue in
+                    let currentStep = round(newValue / 3)
+                    if currentStep != round(previousStep / 3) {
+                        HapticManager.shared.selectionChanged()
+                    }
+                    previousStep = newValue
                 }
         }
         .padding(.horizontal, 20)

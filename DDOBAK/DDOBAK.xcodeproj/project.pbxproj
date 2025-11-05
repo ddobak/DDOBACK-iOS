@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		C628ECE12E8CD5AD000D08CA /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = C628ECE02E8CD5AD000D08CA /* Alamofire */; };
+		C6EC99442EAB756C0080D844 /* BetterSafariView in Frameworks */ = {isa = PBXBuildFile; productRef = C6EC99432EAB756C0080D844 /* BetterSafariView */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,6 +47,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C628ECE12E8CD5AD000D08CA /* Alamofire in Frameworks */,
+				C6EC99442EAB756C0080D844 /* BetterSafariView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -91,6 +93,7 @@
 			name = DDOBAK;
 			packageProductDependencies = (
 				C628ECE02E8CD5AD000D08CA /* Alamofire */,
+				C6EC99432EAB756C0080D844 /* BetterSafariView */,
 			);
 			productName = DDOBAK;
 			productReference = C6E6227A2E06829600166DB4 /* DDOBAK.app */;
@@ -122,6 +125,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				C628ECDF2E8CD5AD000D08CA /* XCRemoteSwiftPackageReference "Alamofire" */,
+				C6EC99422EAB756C0080D844 /* XCRemoteSwiftPackageReference "BetterSafariView" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C6E6227B2E06829600166DB4 /* Products */;
@@ -389,6 +393,14 @@
 				minimumVersion = 5.10.2;
 			};
 		};
+		C6EC99422EAB756C0080D844 /* XCRemoteSwiftPackageReference "BetterSafariView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/stleamist/BetterSafariView.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -396,6 +408,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C628ECDF2E8CD5AD000D08CA /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
+		};
+		C6EC99432EAB756C0080D844 /* BetterSafariView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C6EC99422EAB756C0080D844 /* XCRemoteSwiftPackageReference "BetterSafariView" */;
+			productName = BetterSafariView;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

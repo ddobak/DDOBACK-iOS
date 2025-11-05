@@ -6,12 +6,14 @@
 //
 
 import SwiftUI
+import BetterSafariView
 
 struct HomeView: View {
     
     @Environment(NavigationModel.self) private var navigationModel
     
     @State private var viewModel: HomeViewModel = .init()
+    @State private var showNoticeNotionWebView: Bool = false
     
     // for debug
     @State private var isShowingTokenAlert: Bool = false
@@ -127,6 +129,12 @@ extension HomeView {
             Capsule()
                 .foregroundStyle(.mainBlue.opacity(0.1))
         }
+        .onTapGesture {
+            showNoticeNotionWebView = true
+        }
+        .safariView(isPresented: $showNoticeNotionWebView) {
+            SafariView(url: .init(string: NotionWebViewConfig.noticeUrlStr)!)
+        }
     }
     
     private var mainBanner: some View {
@@ -135,6 +143,10 @@ extension HomeView {
             .aspectRatio(contentMode: .fit)
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .buttonShadow()
+            .onTapGesture {
+                HapticManager.shared.selectionChanged()
+                navigationModel.push(.selectContractType)
+            }
     }
     
     private var mainFeatureNavigator: some View {
